@@ -1,0 +1,8 @@
+ALTER TABLE users
+    ADD updated_by VARCHAR(255);
+
+ALTER TABLE users
+    ADD deleted_at TIMESTAMP WITHOUT TIME ZONE;
+
+ALTER TABLE users
+    ALTER COLUMN updated_at DROP NOT NULL;

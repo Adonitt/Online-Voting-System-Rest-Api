@@ -1,14 +1,19 @@
 package org.example.kqz.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.kqz.entities.enums.RoleEnum;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -36,7 +41,7 @@ public class UserEntity {
     @Column(name = "password", nullable = false, length = 50)
     private String password;
 
-    @Column(name="birthDate", nullable = false)
+    @Column(name="birth_date", nullable = false)
     private LocalDate birthDate;
 
     @Column(name = "registered_at", nullable = false)
@@ -48,5 +53,17 @@ public class UserEntity {
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
+
+    @OneToMany(mappedBy = "user")
+    private List<VoteEntity> votes;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
 }

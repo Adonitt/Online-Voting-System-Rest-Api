@@ -35,6 +35,4 @@ public class PartyEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "totalVotes", nullable = false)
-    private int totalVotes;
 }

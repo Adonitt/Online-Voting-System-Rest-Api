@@ -7,12 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+@Entity(name = "votes")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "votes")
 public class VoteEntity {
 
     @Id
@@ -25,12 +26,16 @@ public class VoteEntity {
     private UserEntity user;
 
     @ManyToOne
-    @JoinColumn(name = "candidate_id", nullable = false)
-    private CandidatesEntity candidate;
-
-    @ManyToOne
     @JoinColumn(name = "party_id", nullable = false)
     private PartyEntity party;
+
+    @ManyToMany
+    @JoinTable(
+            name = "vote_candidates",  // Tabela lidhëse
+            joinColumns = @JoinColumn(name = "vote_id"),  // Referencë nga vote_id
+            inverseJoinColumns = @JoinColumn(name = "candidate_id")  // Referencë nga candidate_id
+    )
+    private List<CandidatesEntity> candidates;
 
     @Column(name = "time_stamp", nullable = false)
     private LocalDateTime timeStamp = LocalDateTime.now();
