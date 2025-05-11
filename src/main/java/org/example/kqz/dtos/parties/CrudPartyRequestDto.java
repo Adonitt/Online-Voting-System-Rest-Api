@@ -1,11 +1,13 @@
 package org.example.kqz.dtos.parties;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.example.kqz.entities.CandidatesEntity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class CrudPartyRequestDto {
@@ -32,5 +34,14 @@ public class CrudPartyRequestDto {
     @NotBlank(message = "Description must not be empty")
     @Size(min = 10, max = 255, message = "Description must be between 10 and 255 characters")
     private String description;
+
+    private String createdBy;
+
+    private LocalDateTime createdAt;
+
+    private String updatedBy;
+
+    private LocalDateTime updatedAt;
+
 
 }

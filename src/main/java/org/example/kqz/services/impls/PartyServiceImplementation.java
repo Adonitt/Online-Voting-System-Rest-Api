@@ -1,6 +1,7 @@
 package org.example.kqz.services.impls;
 
 import org.example.kqz.dtos.parties.CrudPartyRequestDto;
+import org.example.kqz.dtos.user.CreateUserRequestDto;
 import org.example.kqz.services.interfaces.PartyService;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +25,13 @@ public class PartyServiceImplementation implements PartyService {
     }
 
     @Override
-    public void modify(CrudPartyRequestDto entity, Long id) {
+    public CreateUserRequestDto modify(CrudPartyRequestDto entity, Long id) {
 
+        return null;
     }
 
     @Override
-    public void remove(Long id) {
+    public void removeById(Long id) {
 
     }
 }

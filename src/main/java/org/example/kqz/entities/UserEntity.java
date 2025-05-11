@@ -2,6 +2,7 @@ package org.example.kqz.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.kqz.entities.enums.NationalityEnum;
 import org.example.kqz.entities.enums.RoleEnum;
 
 import java.time.LocalDate;
@@ -32,14 +33,15 @@ public class UserEntity {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 50)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
-    @Column(name = "registered_at", nullable = false)
-    private LocalDateTime registeredAt;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "nationality", nullable = false)
+    private NationalityEnum nationality;
 
     @Column(name = "has_voted", nullable = false)
     private boolean hasVoted = false;
@@ -51,13 +53,14 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     private List<VoteEntity> votes;
 
+    @Column(name = "registered_at", nullable = false)
+    private LocalDateTime registeredAt;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
 
 }

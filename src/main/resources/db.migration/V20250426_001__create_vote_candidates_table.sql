@@ -1,4 +1,3 @@
-
 CREATE TABLE vote_candidates (
                                  vote_id BIGINT NOT NULL,
                                  candidate_id BIGINT NOT NULL,

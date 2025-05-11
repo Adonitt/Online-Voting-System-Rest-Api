@@ -1,13 +1,16 @@
 package org.example.kqz.dtos.candidates;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.kqz.annotations.AtLeast18YearsOld;
 import org.example.kqz.entities.PartyEntity;
+import org.example.kqz.entities.enums.NationalityEnum;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -40,5 +43,13 @@ public class CRDCandidateRequestDto {
 
     @NotNull(message = "Party id must not be null")
     private PartyEntity party_id;
+
+    private String createdBy;
+
+    private LocalDateTime createdAt;
+
+
+
+    private NationalityEnum nationality;
 
 }

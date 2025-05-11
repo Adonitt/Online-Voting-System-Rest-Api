@@ -42,8 +42,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     request.setAttribute("userId", ((AppUserDetails) userDetails).getId());
                 }
             }
-
-
         } catch (Exception e) {
 //            log.error("Error logging in: {}", e.getMessage());
             System.out.println("error" + e.getMessage());

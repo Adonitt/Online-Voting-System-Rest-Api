@@ -1,4 +1,4 @@
-package org.example.kqz.controllers.auth;
+package org.example.kqz.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.dtos.auth.AuthResponse;

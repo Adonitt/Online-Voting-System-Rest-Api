@@ -2,6 +2,7 @@ package org.example.kqz.services.impls;
 
 import org.example.kqz.dtos.candidates.CRDCandidateRequestDto;
 import org.example.kqz.dtos.candidates.UpdateCandidateRequestDto;
+import org.example.kqz.dtos.user.CreateUserRequestDto;
 import org.example.kqz.services.interfaces.CandidateService;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +26,13 @@ public class CandidateServiceImplementation implements CandidateService {
     }
 
     @Override
-    public void modify(UpdateCandidateRequestDto entity, Long id) {
+    public CreateUserRequestDto modify(UpdateCandidateRequestDto entity, Long id) {
 
+        return null;
     }
 
     @Override
-    public void remove(Long id) {
+    public void removeById(Long id) {
 
     }
 }

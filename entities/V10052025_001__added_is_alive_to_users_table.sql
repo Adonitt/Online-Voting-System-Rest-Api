@@ -1,0 +1,6 @@
+ALTER TABLE users
+    ADD is_alive BOOLEAN;
+
+ALTER TABLE users
+ALTER
+COLUMN password TYPE VARCHAR(50) USING (password::VARCHAR(50));

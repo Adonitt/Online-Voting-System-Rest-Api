@@ -5,11 +5,12 @@ CREATE TABLE users
     first_name    VARCHAR(255)                            NOT NULL,
     last_name     VARCHAR(255)                            NOT NULL,
     email         VARCHAR(255)                            NOT NULL,
-    password      VARCHAR(50)                             NOT NULL,
+    password      VARCHAR(255)                            NOT NULL,
     birth_date    date                                    NOT NULL,
     registered_at TIMESTAMP WITHOUT TIME ZONE             NOT NULL,
     has_voted     BOOLEAN                                 NOT NULL,
     role          VARCHAR(255)                            NOT NULL,
+    is_alive      BOOLEAN                                 NOT NULL,
     CONSTRAINT pk_users PRIMARY KEY (user_id)
 );
 

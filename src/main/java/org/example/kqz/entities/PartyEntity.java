@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -17,7 +18,7 @@ public class PartyEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="party_id", nullable = false)
+    @Column(name = "party_id", nullable = false)
     private Long id;
 
     @Column(name = "name", nullable = false, unique = true)
@@ -26,7 +27,7 @@ public class PartyEntity {
     @OneToMany(mappedBy = "party_id", fetch = FetchType.LAZY)
     private List<CandidatesEntity> candidates;
 
-    @Column(name = "numberOfParty", nullable = false, unique = true)
+    @Column(name = "number_of_party", nullable = false, unique = true)
     private String numberOfParty;
 
     @Column(name = "symbol", nullable = false)
@@ -34,5 +35,17 @@ public class PartyEntity {
 
     @Column(name = "description", nullable = false)
     private String description;
+
+    @Column(name = "created_by", nullable = false)
+    private String createdBy;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 }

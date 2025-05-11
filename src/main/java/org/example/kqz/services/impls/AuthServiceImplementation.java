@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.example.kqz.exceptions.ResourceNotFoundException;
 import org.example.kqz.services.interfaces.AuthService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 import java.security.Key;
 import java.util.Date;
@@ -73,6 +77,26 @@ public class AuthServiceImplementation implements AuthService {
     private String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
         // ne body qe na u kthy prej tokenit, po i thojme qe me marre veq sub, qe ne rastin tone osht email
+    }
+
+    // Metoda për të marrë Authentication
+    public static Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    // Metoda për të marrë email-in e përdoruesit të loguar
+    public static String getLoggedInUserEmail() {
+        Authentication authentication = getAuthentication();
+        return authentication.getName();  // Merr emailin ose username-in
+    }
+
+    // Metoda për të marrë rolin e përdoruesit të loguar
+    public static String getLoggedInUserRole() {
+        Authentication authentication = getAuthentication();
+        return authentication.getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
     }
 
 }

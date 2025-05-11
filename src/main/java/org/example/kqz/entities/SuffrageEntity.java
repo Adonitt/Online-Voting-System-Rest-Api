@@ -1,11 +1,11 @@
 package org.example.kqz.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.kqz.entities.enums.NationalityEnum;
 
 import java.time.LocalDate;
 
@@ -13,29 +13,21 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "voters")
-public class AllowedVotersEntity {
+@Entity(name = "suffrages")
+public class SuffrageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(max = 255)
-    @Column(name = "personal_no")
     private String personalNo;
 
-    @Size(max = 255)
-    @Column(name = "first_name")
     private String firstName;
 
-    @Size(max = 255)
-    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "birth_date")
     private LocalDate birthDate;
 
-    @Column(name = "is_alive")
-    private boolean isAlive;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "nationality", nullable = false)
+    private NationalityEnum nationality;
 }
