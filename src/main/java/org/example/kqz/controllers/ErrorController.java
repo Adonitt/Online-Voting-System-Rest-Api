@@ -5,8 +5,12 @@ import org.example.kqz.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class ErrorController {
@@ -14,6 +18,15 @@ public class ErrorController {
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         var errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(), null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage())
+        );
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BadCredentialsException.class) // 401 - Unauthorized
@@ -24,16 +37,16 @@ public class ErrorController {
 
     @ExceptionHandler(NotKosovoCitizenException.class)
     public ResponseEntity<ErrorResponse> handleException(NotKosovoCitizenException e) {
-        var errorResponse = new ErrorResponse("There is no such person registered in Kosovo as citizen! Please recheck your personal number, name and surname!", HttpStatus.BAD_REQUEST.value(), null);
+        var errorResponse = new ErrorResponse("Incorrect data! Please recheck personal number, first name, last name and birth date!", HttpStatus.BAD_REQUEST.value(), null);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(MustBe18ToVote.class)
-    // 400 - Bad Request (client error, since the user should handle this by checking age)
     public ResponseEntity<ErrorResponse> handleException(MustBe18ToVote e) {
         var errorResponse = new ErrorResponse("User must be more than 18 years old to register!", HttpStatus.BAD_REQUEST.value(), null);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
 
     @ExceptionHandler(EmailAlreadyExistsException.class) // 409 - Conflict (email conflict)
     public ResponseEntity<ErrorResponse> handleException(EmailAlreadyExistsException e) {
@@ -69,6 +82,12 @@ public class ErrorController {
     public ResponseEntity<ErrorResponse> handleException(AlreadyVotedException e) {
         var errorResponse = new ErrorResponse("You have already voted!", HttpStatus.BAD_REQUEST.value(), null);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(CandidateNumberAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleException(CandidateNumberAlreadyExistsException e) {
+        var errorResponse = new ErrorResponse("Candidate number already exists!", HttpStatus.CONFLICT.value(), null);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
 

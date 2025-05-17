@@ -43,6 +43,8 @@ public class CRDCandidateRequestDto {
     @NotNull(message = "Party id must not be null")
     private Long party;
 
+    private Long candidateNumber;
+
     private String createdBy;
 
     private LocalDateTime createdAt;

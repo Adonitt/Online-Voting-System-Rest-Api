@@ -27,6 +27,9 @@ public class UpdateCandidateRequestDto {
     @NotNull(message = "Party id must not be null")
     private Long party;
 
+    @NotNull(message = "Candidate number must not be null")
+    private Long candidateNumber;
+
     @Column(name = "updated_by")
     private String updatedBy;
 

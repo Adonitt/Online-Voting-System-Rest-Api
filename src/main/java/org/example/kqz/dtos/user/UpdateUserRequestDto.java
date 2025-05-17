@@ -23,11 +23,6 @@ public class UpdateUserRequestDto {
     @NotNull(message = "Email must not be null")
     private String email;
 
-    @Past(message = "Birth date must be in the past")
-    @NotNull(message = "Birth date must not be null")
-    @AtLeast18YearsOld()
-    private LocalDate birthDate;
-
     @PastOrPresent(message = "Registered at must be in the past or present")
     private LocalDateTime registeredAt = LocalDateTime.now();
 

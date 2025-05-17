@@ -40,6 +40,9 @@ public class CandidatesEntity {
     @JsonIgnore
     private PartyEntity party;
 
+    @Column(name = "candidate_number", nullable = false)
+    private Long candidateNumber;
+
     @Column(name = "created_by", nullable = false)
     private String createdBy;
 

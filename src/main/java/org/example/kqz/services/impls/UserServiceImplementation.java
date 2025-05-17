@@ -44,7 +44,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     private void validateUser(CreateUserRequestDto dto) {
-        if (!citizensRepository.existsByPersonalNoAndFirstNameAndLastName(dto.getPersonalNo(), dto.getFirstName(), dto.getLastName())) {
+        if (!citizensRepository.existsByPersonalNoAndFirstNameAndLastNameAndBirthDate(dto.getPersonalNo(), dto.getFirstName(), dto.getLastName(), dto.getBirthDate())) {
             throw new NotKosovoCitizenException("There is no such person with personal number " + dto.getPersonalNo() + "and name " + dto.getFirstName() + " " + dto.getLastName() + " in Kosovo");
         }
 
@@ -63,7 +63,6 @@ public class UserServiceImplementation implements UserService {
         if (dto.getBirthDate().isAfter(LocalDate.now().minusYears(18))) {
             throw new MustBe18ToVote("User must be at least 18 years old to register");
         }
-
     }
 
     @Override
@@ -99,7 +98,6 @@ public class UserServiceImplementation implements UserService {
 
         String updatedBy = adminUser.get().getFirstName() + " " + adminUser.get().getLastName();
 
-        userFromDB.setBirthDate(dto.getBirthDate());
         userFromDB.setEmail(dto.getEmail());
         userFromDB.setNationality(dto.getNationality());
         userFromDB.setUpdatedAt(LocalDateTime.now());
