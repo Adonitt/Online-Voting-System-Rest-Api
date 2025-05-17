@@ -2,7 +2,7 @@ package org.example.kqz.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.entities.CitizensEntity;
-import org.example.kqz.services.suffrage.CitizensService;
+import org.example.kqz.services.citizens.CitizensService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

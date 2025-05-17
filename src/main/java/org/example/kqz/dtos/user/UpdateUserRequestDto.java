@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.kqz.annotations.AtLeast18YearsOld;
+import org.example.kqz.entities.enums.CityEnum;
 import org.example.kqz.entities.enums.NationalityEnum;
 import org.example.kqz.entities.enums.RoleEnum;
 
@@ -18,18 +19,12 @@ public class UpdateUserRequestDto {
     @Positive
     private Long id;
 
-    @Email(message = "Invalid email format")
-    @NotBlank(message = "Email must not be empty")
-    @NotNull(message = "Email must not be null")
-    private String email;
-
-    @PastOrPresent(message = "Registered at must be in the past or present")
-    private LocalDateTime registeredAt = LocalDateTime.now();
-
     private boolean hasVoted = false;
 
     private RoleEnum role;
 
     private NationalityEnum nationality;
+
+    private CityEnum city;
 
 }

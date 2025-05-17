@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.kqz.entities.VoteEntity;
+import org.example.kqz.entities.enums.CityEnum;
 import org.example.kqz.entities.enums.NationalityEnum;
 import org.example.kqz.entities.enums.RoleEnum;
 
@@ -37,12 +38,12 @@ public class UserDetailsDto {
 
     private RoleEnum role;
 
-    private List<VoteEntity> votes;
-
     private LocalDateTime updatedAt;
 
     private String updatedBy;
 
     private NationalityEnum nationality;
+
+    private CityEnum city;
 
 }

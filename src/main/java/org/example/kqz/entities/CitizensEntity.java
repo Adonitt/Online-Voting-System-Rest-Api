@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.kqz.entities.enums.CityEnum;
 import org.example.kqz.entities.enums.NationalityEnum;
 
 import java.time.LocalDate;
@@ -30,4 +31,7 @@ public class CitizensEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "nationality", nullable = false)
     private NationalityEnum nationality;
+
+    @Enumerated(EnumType.STRING)
+    private CityEnum city;
 }

@@ -1,4 +1,4 @@
-package org.example.kqz.services.suffrage;
+package org.example.kqz.services.citizens;
 
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.entities.CitizensEntity;

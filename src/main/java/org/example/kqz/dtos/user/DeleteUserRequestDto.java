@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.kqz.annotations.AtLeast18YearsOld;
+import org.example.kqz.entities.enums.CityEnum;
 import org.example.kqz.entities.enums.NationalityEnum;
 import org.example.kqz.entities.enums.RoleEnum;
 
@@ -58,5 +59,5 @@ public class DeleteUserRequestDto {
 
     private RoleEnum role;
 
-
+    private CityEnum city;
 }

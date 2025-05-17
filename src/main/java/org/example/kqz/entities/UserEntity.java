@@ -2,6 +2,7 @@ package org.example.kqz.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.kqz.entities.enums.CityEnum;
 import org.example.kqz.entities.enums.NationalityEnum;
 import org.example.kqz.entities.enums.RoleEnum;
 
@@ -62,5 +63,8 @@ public class UserEntity {
     @Column(name = "updated_by")
     private String updatedBy;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "city")
+    private CityEnum city;
 
 }

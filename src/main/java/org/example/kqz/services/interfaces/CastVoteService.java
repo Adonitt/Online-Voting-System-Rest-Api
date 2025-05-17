@@ -5,5 +5,4 @@ import org.example.kqz.dtos.votes.VoteResponseDto;
 
 public interface CastVoteService {
     VoteResponseDto castVote(VoteRequestDto requestDto);
-
 }

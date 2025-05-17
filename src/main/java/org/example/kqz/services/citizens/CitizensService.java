@@ -1,4 +1,4 @@
-package org.example.kqz.services.suffrage;
+package org.example.kqz.services.citizens;
 
 import org.example.kqz.entities.CitizensEntity;
 import org.example.kqz.services.base_services.Addable;

@@ -34,6 +34,7 @@ public class UserServiceImplementation implements UserService {
         validateUser(dto);
 
         var entity = mapper.toEntity(dto);
+        entity.setCity(dto.getCity());
 
         String encryptedPassword = passwordEncoder.encode(dto.getPassword());
         entity.setPassword(encryptedPassword);
@@ -84,26 +85,32 @@ public class UserServiceImplementation implements UserService {
     public void removeById(Long id) {
         var userFromDB = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (userFromDB.isHasVoted()) {
+            throw new UserCannotBeDeletedException("User has already voted");
+        }
 
         userRepository.deleteById(id);
     }
 
     @Override
     public UpdateUserRequestDto modify(UpdateUserRequestDto dto, Long id) {
-        var userFromDB = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        var userFromDB = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         String email = AuthServiceImplementation.getLoggedInUserEmail();
 
-        Optional<UserEntity> adminUser = userRepository.findByEmailAndRole(email, RoleEnum.ADMIN);
+        UserEntity adminUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Admin user not found"));
 
-        String updatedBy = adminUser.get().getFirstName() + " " + adminUser.get().getLastName();
+        String updatedBy = adminUser.getFirstName() + " " + adminUser.getLastName();
 
-        userFromDB.setEmail(dto.getEmail());
         userFromDB.setNationality(dto.getNationality());
         userFromDB.setUpdatedAt(LocalDateTime.now());
         userFromDB.setUpdatedBy(updatedBy);
+        userFromDB.setCity(dto.getCity());
 
         var updatedUser = userRepository.save(userFromDB);
         return mapper.toUpdateDto(updatedUser);
     }
+
 }

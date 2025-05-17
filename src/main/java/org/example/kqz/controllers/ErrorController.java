@@ -96,5 +96,11 @@ public class ErrorController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(UserCannotBeDeletedException.class)
+    public ResponseEntity<ErrorResponse> handleException(UserCannotBeDeletedException e) {
+        var errorResponse = new ErrorResponse("User cannot be deleted since he has voted!", HttpStatus.BAD_REQUEST.value(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
 }
 

@@ -31,9 +31,30 @@ public class CastVoteServiceImplementation implements CastVoteService {
     private final UserRepository userRepository;
     private final VoteMapper voteMapper;
 
-    @Transactional
     @Override
     public VoteResponseDto castVote(VoteRequestDto voteRequestDto) {
+        PartyEntity party = partyRepository.findById(voteRequestDto.getParty())
+                .orElseThrow(() -> new PartyNotFoundException("Party not found with ID: " + voteRequestDto.getParty()));
+
+        UserEntity user = validateVoteRequest(voteRequestDto, party);
+
+        List<CandidatesEntity> candidates = candidatesRepository.findAllById(voteRequestDto.getCandidates());
+
+        VoteEntity vote = new VoteEntity();
+        vote.setUser(user);
+        vote.setParty(party);
+        vote.setCandidates(candidates);
+        vote.setTimeStamp(LocalDateTime.now());
+
+        VoteEntity savedVote = voteRepository.save(vote);
+
+        user.setHasVoted(true);
+        userRepository.save(user);
+
+        return voteMapper.toResponseDto(savedVote);
+    }
+
+    private UserEntity validateVoteRequest(VoteRequestDto voteRequestDto, PartyEntity party) {
         String userEmail = AuthServiceImplementation.getLoggedInUserEmail();
 
         UserEntity user = userRepository.findByEmail(userEmail)
@@ -47,9 +68,6 @@ public class CastVoteServiceImplementation implements CastVoteService {
             throw new AlreadyVotedException("You have already voted.");
         }
 
-        PartyEntity party = partyRepository.findById(voteRequestDto.getParty())
-                .orElseThrow(() -> new PartyNotFoundException("Party not found with ID: " + voteRequestDto.getParty()));
-
         List<Long> candidateIds = voteRequestDto.getCandidates();
         if (candidateIds.size() < 1 || candidateIds.size() > 10) {
             throw new MustChooseBetween1And10Candidates("You must select between 1 and 10 candidates.");
@@ -60,31 +78,15 @@ public class CastVoteServiceImplementation implements CastVoteService {
             throw new RuntimeException("Some candidates were not found.");
         }
 
-        for (Long candidateNumber : voteRequestDto.getCandidates()) {
-            CandidatesEntity candidate = candidatesRepository
-                    .findByPartyIdAndCandidateNumber(party.getId(), candidateNumber)
-                    .orElseThrow(() -> new RuntimeException(
-                            "Candidate number " + candidateNumber + " does not exist in party " + party.getId()
-                    ));
-            candidates.add(candidate);
+        for (CandidatesEntity candidate : candidates) {
+            if (!candidate.getParty().getId().equals(party.getId())) {
+                throw new RuntimeException("Candidate " + candidate.getId() + " does not belong to party " + party.getId());
+            }
         }
 
-
-        // Build VoteEntity directly
-        VoteEntity vote = new VoteEntity();
-        vote.setUser(user);
-        vote.setParty(party);
-        vote.setCandidates(candidates);
-        vote.setTimeStamp(LocalDateTime.now());
-
-        VoteEntity savedVote = voteRepository.save(vote);
-
-        user.setHasVoted(true);
-        userRepository.save(user);
-
-        // Map saved entity to response DTO
-        return voteMapper.toResponseDto(savedVote);
-
+        return user;
     }
+
+
 
 }

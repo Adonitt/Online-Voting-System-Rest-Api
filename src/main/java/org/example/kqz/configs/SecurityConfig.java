@@ -49,23 +49,16 @@ public class SecurityConfig {
                         // per requests qe nuk duhet auth vendosen te request matchers
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/default").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/{id}").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/{id}").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/{id}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/rks/suffrages").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/auth/change-password").authenticated()
 
-                        .requestMatchers(HttpMethod.GET, "/api/v1/parties").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/parties/{id}").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/parties/add").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/parties/{id}").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/api/v1/candidates").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/candidates/{id}").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/candidates/create").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/candidates/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
+
+                        .requestMatchers("/api/v1/votes/**").hasRole(RoleEnum.USER.name())
+                        .requestMatchers("/api/votes/results/**").hasAnyRole(RoleEnum.ADMIN.name(), RoleEnum.USER.name())
 
                         .anyRequest().authenticated()
                 ).csrf(csrf -> csrf.disable()) // cross site request forgery

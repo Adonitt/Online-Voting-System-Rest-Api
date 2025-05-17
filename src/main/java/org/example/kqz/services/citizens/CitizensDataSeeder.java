@@ -1,7 +1,8 @@
-package org.example.kqz.services.suffrage;
+package org.example.kqz.services.citizens;
 
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.entities.CitizensEntity;
+import org.example.kqz.entities.enums.CityEnum;
 import org.example.kqz.entities.enums.NationalityEnum;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class CitizensDataSeeder implements CommandLineRunner {
         List<String> lastNames = List.of("Halili", "Gashi", "Berisha", "Krasniqi", "Hoxha", "Gashi", "Shala", "Rama", "Ismaili", "Morina", "Sadiku", "Zeqiri");
         Random random = new Random();
 
-        if (suffrageService.count() > 150) return;
+        if (suffrageService.count() > 500) return;
 
         int created = 0;
 
@@ -46,6 +47,8 @@ public class CitizensDataSeeder implements CommandLineRunner {
 
             NationalityEnum[] nationalities = NationalityEnum.values();
             entity.setNationality(nationalities[random.nextInt(nationalities.length)]);
+            CityEnum[] cities = CityEnum.values();
+            entity.setCity(cities[random.nextInt(cities.length)]);
 
             suffrageService.add(entity);
             created++;
