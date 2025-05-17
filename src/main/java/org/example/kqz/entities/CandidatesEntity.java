@@ -1,5 +1,6 @@
 package org.example.kqz.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,7 +37,8 @@ public class CandidatesEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id", nullable = false)
-    private PartyEntity party_id;
+    @JsonIgnore
+    private PartyEntity party;
 
     @Column(name = "created_by", nullable = false)
     private String createdBy;
@@ -49,7 +51,6 @@ public class CandidatesEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
 
 
     @Enumerated(EnumType.STRING)

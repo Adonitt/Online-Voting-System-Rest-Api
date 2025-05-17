@@ -8,18 +8,15 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class VoteRequestDto {
-    @NotNull(message = "User ID cannot be null")
-    private Long userId;
-
     @NotNull(message = "Party ID cannot be null")
     private Long partyId;
 
     @NotNull(message = "Candidate IDs cannot be null")
-    @Size(min = 1, message = "At least one candidate must be selected")
+    @Size(min = 1, max = 10, message = "You must select between 1 and 10 candidates")
     private List<Long> candidateIds;
 
 }

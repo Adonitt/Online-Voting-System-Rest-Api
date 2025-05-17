@@ -1,7 +1,7 @@
 package org.example.kqz.services.suffrage;
 
 import lombok.RequiredArgsConstructor;
-import org.example.kqz.entities.SuffrageEntity;
+import org.example.kqz.entities.CitizensEntity;
 import org.example.kqz.entities.enums.NationalityEnum;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -12,9 +12,9 @@ import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
-public class SuffrageDataSeeder implements CommandLineRunner {
+public class CitizensDataSeeder implements CommandLineRunner {
 
-    private final SuffrageService suffrageService;
+    private final CitizensService suffrageService;
 
     @Override
     public void run(String... args) {
@@ -34,7 +34,7 @@ public class SuffrageDataSeeder implements CommandLineRunner {
                 continue;
             }
 
-            SuffrageEntity entity = new SuffrageEntity();
+            CitizensEntity entity = new CitizensEntity();
             entity.setPersonalNo(personalNo);
             entity.setFirstName(firstNames.get(random.nextInt(firstNames.size())));
             entity.setLastName(lastNames.get(random.nextInt(lastNames.size())));

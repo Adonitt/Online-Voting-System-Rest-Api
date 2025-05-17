@@ -56,6 +56,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/users/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/rks/suffrages").permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/parties").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/parties/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/parties/add").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/parties/{id}").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/candidates").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/candidates/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/candidates/create").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/candidates/{id}").permitAll()
+
                         .anyRequest().authenticated()
                 ).csrf(csrf -> csrf.disable()) // cross site request forgery
                 .sessionManagement(session ->

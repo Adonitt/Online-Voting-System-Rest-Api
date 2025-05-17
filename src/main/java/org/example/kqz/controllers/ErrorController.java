@@ -53,6 +53,24 @@ public class ErrorController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(PartyNotExistsException.class)
+    public ResponseEntity<ErrorResponse> handleException(PartyNotExistsException e) {
+        var errorResponse = new ErrorResponse("Party Already Exists with this name or number!", HttpStatus.CONFLICT.value(), null);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(MustChooseBetween1And10Candidates.class)
+    public ResponseEntity<ErrorResponse> handleException(MustChooseBetween1And10Candidates e) {
+        var errorResponse = new ErrorResponse("You must choose between 1 and 10 candidates!", HttpStatus.BAD_REQUEST.value(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(AlreadyVotedException.class)
+    public ResponseEntity<ErrorResponse> handleException(AlreadyVotedException e) {
+        var errorResponse = new ErrorResponse("You have already voted!", HttpStatus.BAD_REQUEST.value(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
 
 }
 

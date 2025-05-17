@@ -31,7 +31,6 @@ public class CRDCandidateRequestDto {
     private String lastName;
 
     @NotNull(message = "Birth date must not be null")
-    @NotBlank(message = "Birth date must not be empty")
     @AtLeast18YearsOld
     @Past(message = "Birth date must be in the past")
     private LocalDate birthDate;
@@ -42,13 +41,11 @@ public class CRDCandidateRequestDto {
     private String personalNo;
 
     @NotNull(message = "Party id must not be null")
-    private PartyEntity party_id;
+    private Long party;
 
     private String createdBy;
 
     private LocalDateTime createdAt;
-
-
 
     private NationalityEnum nationality;
 

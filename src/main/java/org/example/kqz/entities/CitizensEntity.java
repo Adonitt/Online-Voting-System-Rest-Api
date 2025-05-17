@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "suffrages")
-public class SuffrageEntity {
+@Entity(name = "citizens")
+public class CitizensEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

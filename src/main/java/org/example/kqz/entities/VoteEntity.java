@@ -29,7 +29,7 @@ public class VoteEntity {
     @JoinColumn(name = "party_id", nullable = false)
     private PartyEntity party;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "vote_candidates",  // Tabela lidhëse
             joinColumns = @JoinColumn(name = "vote_id"),  // Referencë nga vote_id

@@ -1,37 +1,92 @@
 package org.example.kqz.services.impls;
 
-import org.example.kqz.dtos.parties.CrudPartyRequestDto;
-import org.example.kqz.dtos.user.CreateUserRequestDto;
+import lombok.RequiredArgsConstructor;
+import org.example.kqz.dtos.parties.CRDPartyRequestDto;
+import org.example.kqz.dtos.parties.PartyListingDto;
+import org.example.kqz.dtos.parties.UpdatePartyDto;
+import org.example.kqz.entities.CandidatesEntity;
+import org.example.kqz.entities.PartyEntity;
+import org.example.kqz.exceptions.PartyNotExistsException;
+import org.example.kqz.mappers.PartiesMapper;
+import org.example.kqz.repositories.PartyRepository;
 import org.example.kqz.services.interfaces.PartyService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PartyServiceImplementation implements PartyService {
+    private final PartiesMapper mapper;
+    private final PartyRepository repository;
+    private final PartyRepository partyRepository;
+
     @Override
-    public CrudPartyRequestDto add(CrudPartyRequestDto entity) {
-        return null;
+    public CRDPartyRequestDto add(CRDPartyRequestDto dto) {
+        validateParty(dto);
+        var entity = mapper.toEntity(dto);
+
+        if (entity.getCandidates() != null && !entity.getCandidates().isEmpty()) {
+            for (CandidatesEntity candidate : entity.getCandidates()) {
+                candidate.setParty(entity);
+            }
+        }
+
+        entity.setCreatedAt(LocalDateTime.now());
+        entity.setCreatedBy(AuthServiceImplementation.getLoggedInUserEmail());
+
+        var savedEntity = repository.save(entity);
+
+        return mapper.toDto(savedEntity);
+    }
+
+
+    private void validateParty(CRDPartyRequestDto dto) {
+        if (repository.existsByName(dto.getName())) {
+            throw new PartyNotExistsException("Party with name '" + dto.getName() + "' already exists");
+        }
+
+        if (repository.existsByNumberOfParty(dto.getNumberOfParty())) {
+            throw new PartyNotExistsException("Party with number '" + dto.getNumberOfParty() + "' already exists");
+        }
+
     }
 
     @Override
-    public List<CrudPartyRequestDto> findAll() {
-        return List.of();
+    public List<PartyListingDto> findAll() {
+        var partiesList = repository.findAll();
+        return mapper.toPartyListingDto(partiesList);
     }
 
     @Override
-    public CrudPartyRequestDto findById(Long id) {
-        return null;
+    public CRDPartyRequestDto findById(Long id) {
+        var partyEntity = repository.findById(id).orElseThrow(() -> new RuntimeException("Party not found"));
+        System.out.println("Found Party: " + partyEntity.getName());
+        return mapper.toDto(partyEntity);
     }
 
-    @Override
-    public CreateUserRequestDto modify(CrudPartyRequestDto entity, Long id) {
-
-        return null;
-    }
 
     @Override
     public void removeById(Long id) {
+        findById(id);
+        repository.deleteById(id);
+    }
 
+
+    @Override
+    public UpdatePartyDto modify(UpdatePartyDto dto, Long id) {
+        PartyEntity partyFromDB = partyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Party not found with ID: " + id));
+
+        partyFromDB.setName(dto.getName());
+        partyFromDB.setNumberOfParty(dto.getNumberOfParty());
+        partyFromDB.setSymbol(dto.getSymbol());
+        partyFromDB.setDescription(dto.getDescription());
+        partyFromDB.setUpdatedAt(LocalDateTime.now());
+        partyFromDB.setUpdatedBy(AuthServiceImplementation.getLoggedInUserEmail());
+
+        var saved = partyRepository.save(partyFromDB);
+        return mapper.toUpdatePartyDto(saved);
     }
 }

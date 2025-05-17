@@ -12,5 +12,4 @@ public interface UserService extends
         Addable<CreateUserRequestDto>,
         Modifiable<UpdateUserRequestDto, Long>,
         Removable<Long> {
-
 }

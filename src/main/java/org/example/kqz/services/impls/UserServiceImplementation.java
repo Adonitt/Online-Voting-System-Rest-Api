@@ -9,7 +9,7 @@ import org.example.kqz.entities.UserEntity;
 import org.example.kqz.entities.enums.RoleEnum;
 import org.example.kqz.exceptions.*;
 import org.example.kqz.mappers.UserMapper;
-import org.example.kqz.repositories.SuffrageRepository;
+import org.example.kqz.repositories.CitizensRepository;
 import org.example.kqz.repositories.UserRepository;
 import org.example.kqz.services.interfaces.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,12 +19,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImplementation implements UserService {
     private final UserRepository userRepository;
-    private final SuffrageRepository suffrageRepository;
+    private final CitizensRepository citizensRepository;
     private final UserMapper mapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -43,7 +44,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     private void validateUser(CreateUserRequestDto dto) {
-        if (!suffrageRepository.existsByPersonalNoAndFirstNameAndLastName(dto.getPersonalNo(), dto.getFirstName(), dto.getLastName())) {
+        if (!citizensRepository.existsByPersonalNoAndFirstNameAndLastName(dto.getPersonalNo(), dto.getFirstName(), dto.getLastName())) {
             throw new NotKosovoCitizenException("There is no such person with personal number " + dto.getPersonalNo() + "and name " + dto.getFirstName() + " " + dto.getLastName() + " in Kosovo");
         }
 
@@ -54,9 +55,11 @@ public class UserServiceImplementation implements UserService {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new EmailAlreadyExistsException("User with email " + dto.getEmail() + " already exists");
         }
+
         if (userRepository.existsByPersonalNo(dto.getPersonalNo())) {
             throw new PersonalNumberAlreadyExists("User with personal number " + dto.getPersonalNo() + " already exists");
         }
+
         if (dto.getBirthDate().isAfter(LocalDate.now().minusYears(18))) {
             throw new MustBe18ToVote("User must be at least 18 years old to register");
         }
@@ -79,15 +82,22 @@ public class UserServiceImplementation implements UserService {
 
 
     @Override
-    public CreateUserRequestDto modify(UpdateUserRequestDto dto, Long id) {
+    public void removeById(Long id) {
+        var userFromDB = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public UpdateUserRequestDto modify(UpdateUserRequestDto dto, Long id) {
         var userFromDB = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         String email = AuthServiceImplementation.getLoggedInUserEmail();
 
-        UserEntity adminUser = userRepository.findByEmailAndRole(email, RoleEnum.ADMIN)
-                .orElseThrow(() -> new ResourceNotFoundException("Admin not found"));
+        Optional<UserEntity> adminUser = userRepository.findByEmailAndRole(email, RoleEnum.ADMIN);
 
-        String updatedBy = adminUser.getFirstName() + " " + adminUser.getLastName();
+        String updatedBy = adminUser.get().getFirstName() + " " + adminUser.get().getLastName();
 
         userFromDB.setBirthDate(dto.getBirthDate());
         userFromDB.setEmail(dto.getEmail());
@@ -96,15 +106,6 @@ public class UserServiceImplementation implements UserService {
         userFromDB.setUpdatedBy(updatedBy);
 
         var updatedUser = userRepository.save(userFromDB);
-        return mapper.toDto(updatedUser);
+        return mapper.toUpdateDto(updatedUser);
     }
-
-    @Override
-    public void removeById(Long id) {
-        var userFromDB = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        userRepository.deleteById(id);
-    }
-
 }

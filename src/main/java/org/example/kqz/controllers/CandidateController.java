@@ -1,0 +1,53 @@
+package org.example.kqz.controllers;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.example.kqz.dtos.candidates.CRDCandidateRequestDto;
+import org.example.kqz.dtos.candidates.UpdateCandidateRequestDto;
+import org.example.kqz.services.interfaces.CandidateService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/candidates")
+@RequiredArgsConstructor
+public class CandidateController {
+    private final CandidateService service;
+
+    @GetMapping("")
+    public ResponseEntity<List<CRDCandidateRequestDto>> findAll() {
+        return ResponseEntity.ok(service.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CRDCandidateRequestDto> findById(@PathVariable Long id) {
+        CRDCandidateRequestDto candidate = service.findById(id);
+        return ResponseEntity.ok(candidate);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<CRDCandidateRequestDto> create(@Valid @RequestBody CRDCandidateRequestDto dto) {
+        CRDCandidateRequestDto saved = service.add(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdateCandidateRequestDto> modify(@Valid @RequestBody UpdateCandidateRequestDto dto, @PathVariable Long id) {
+        return ResponseEntity.ok(service.modify(dto, id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.removeById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/default")
+    public CRDCandidateRequestDto defaultDriver() {
+        return new CRDCandidateRequestDto();
+    }
+
+}

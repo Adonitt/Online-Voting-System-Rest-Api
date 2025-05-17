@@ -24,7 +24,7 @@ public class PartyEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "party_id", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "party", fetch = FetchType.LAZY)
     private List<CandidatesEntity> candidates;
 
     @Column(name = "number_of_party", nullable = false, unique = true)

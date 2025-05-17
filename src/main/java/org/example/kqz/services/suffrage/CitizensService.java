@@ -1,10 +1,10 @@
 package org.example.kqz.services.suffrage;
 
-import org.example.kqz.entities.SuffrageEntity;
+import org.example.kqz.entities.CitizensEntity;
 import org.example.kqz.services.base_services.Addable;
 import org.example.kqz.services.base_services.FindAll;
 
-public interface SuffrageService extends Addable<SuffrageEntity>, FindAll<SuffrageEntity> {
+public interface CitizensService extends Addable<CitizensEntity>, FindAll<CitizensEntity> {
     long count();
 
     boolean existsByPersonalNo(String personalNo);

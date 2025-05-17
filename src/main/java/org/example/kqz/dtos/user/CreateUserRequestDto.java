@@ -1,6 +1,5 @@
 package org.example.kqz.dtos.user;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

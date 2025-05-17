@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.kqz.annotations.AtLeast18YearsOld;
 import org.example.kqz.entities.enums.NationalityEnum;
 import org.example.kqz.entities.enums.RoleEnum;
 
@@ -17,22 +18,23 @@ public class UpdateUserRequestDto {
     @Positive
     private Long id;
 
+    @Email(message = "Invalid email format")
     @NotBlank(message = "Email must not be empty")
     @NotNull(message = "Email must not be null")
-    @Email(message = "Invalid email format")
     private String email;
 
     @Past(message = "Birth date must be in the past")
     @NotNull(message = "Birth date must not be null")
+    @AtLeast18YearsOld()
     private LocalDate birthDate;
 
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    @PastOrPresent(message = "Registered at must be in the past or present")
+    private LocalDateTime registeredAt = LocalDateTime.now();
 
-    private String updatedBy;
-
-    private NationalityEnum nationality;
+    private boolean hasVoted = false;
 
     private RoleEnum role;
 
+    private NationalityEnum nationality;
 
 }

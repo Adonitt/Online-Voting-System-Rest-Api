@@ -1,7 +1,7 @@
 package org.example.kqz.services.base_services;
 
-import org.example.kqz.dtos.user.CreateUserRequestDto;
+import org.example.kqz.dtos.user.UpdateUserRequestDto;
 
 public interface Modifiable<T, Tid> {
-    CreateUserRequestDto modify(T entity, Tid id);
+    T modify(T entity, Tid id);
 }

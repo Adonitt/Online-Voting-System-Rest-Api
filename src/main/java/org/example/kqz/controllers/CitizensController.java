@@ -1,8 +1,8 @@
 package org.example.kqz.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.example.kqz.entities.SuffrageEntity;
-import org.example.kqz.services.suffrage.SuffrageService;
+import org.example.kqz.entities.CitizensEntity;
+import org.example.kqz.services.suffrage.CitizensService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,12 +13,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("rks/suffrages")
-public class SuffrageController {
+public class CitizensController {
 
-    private final SuffrageService service;
+    private final CitizensService service;
 
     @GetMapping("")
-    public ResponseEntity<List<SuffrageEntity>> getAll() {
+    public ResponseEntity<List<CitizensEntity>> getAll() {
         return ResponseEntity.ok(service.findAll());
     }
 }
