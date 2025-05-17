@@ -13,9 +13,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VoteResponseDto {
+
     private Long id;
-    private String userEmail;
-    private CRDPartyRequestDto party;
-    private List<CRDCandidateRequestDto> candidates;
+
+    private String user; // will hold user's email
+
+    private Long party;
+
+    private List<Long> candidates;
+
     private LocalDateTime timeStamp;
+
 }

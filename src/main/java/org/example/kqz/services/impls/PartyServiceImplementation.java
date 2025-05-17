@@ -6,7 +6,7 @@ import org.example.kqz.dtos.parties.PartyListingDto;
 import org.example.kqz.dtos.parties.UpdatePartyDto;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
-import org.example.kqz.exceptions.PartyNotExistsException;
+import org.example.kqz.exceptions.PartyAlreadyExistsException;
 import org.example.kqz.mappers.PartiesMapper;
 import org.example.kqz.repositories.PartyRepository;
 import org.example.kqz.services.interfaces.PartyService;
@@ -44,11 +44,11 @@ public class PartyServiceImplementation implements PartyService {
 
     private void validateParty(CRDPartyRequestDto dto) {
         if (repository.existsByName(dto.getName())) {
-            throw new PartyNotExistsException("Party with name '" + dto.getName() + "' already exists");
+            throw new PartyAlreadyExistsException("Party with name '" + dto.getName() + "' already exists");
         }
 
         if (repository.existsByNumberOfParty(dto.getNumberOfParty())) {
-            throw new PartyNotExistsException("Party with number '" + dto.getNumberOfParty() + "' already exists");
+            throw new PartyAlreadyExistsException("Party with number '" + dto.getNumberOfParty() + "' already exists");
         }
 
     }

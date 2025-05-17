@@ -18,4 +18,6 @@ public interface CandidatesRepository extends JpaRepository<CandidatesEntity, Lo
 
     Optional<CandidatesEntity> findByCandidateNumber(Long candidateNumber);
 
+    Optional<CandidatesEntity> findByPartyIdAndCandidateNumber(Long partyId, Long candidateNumber);
+
 }

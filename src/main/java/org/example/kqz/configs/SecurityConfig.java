@@ -1,6 +1,7 @@
 package org.example.kqz.configs;
 
 import org.example.kqz.entities.UserEntity;
+import org.example.kqz.entities.enums.NationalityEnum;
 import org.example.kqz.entities.enums.RoleEnum;
 import org.example.kqz.repositories.UserRepository;
 import org.example.kqz.security.AppUserDetailsService;
@@ -78,24 +79,25 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(UserRepository repository) {
         var user = new AppUserDetailsService(repository);
 
-//        String email = "user@test.com";
-//
-//        repository.findByEmail(email).orElseGet(() -> {
-//            var newUser = UserEntity.builder()
-//                    .firstName("Adonit")
-//                    .lastName("Halili")
-//                    .personalNo("1252334056")
-//                    .birthDate(LocalDate.of(2005, 2, 12))
-//                    .registeredAt(LocalDateTime.now())
-//                    .hasVoted(false)
-//                    .email(email)
-//
-//                    .password(passwordEncoder().encode("password"))
-//                    .role(RoleEnum.ADMIN)
-//                    .build();
-//
-//            return repository.save(newUser);
-//        });
+        String email = "adonit@halili.com";
+
+        repository.findByEmail(email).orElseGet(() -> {
+            var newUser = UserEntity.builder()
+                    .firstName("Adonit")
+                    .lastName("Halili")
+                    .personalNo("1252334056")
+                    .nationality(NationalityEnum.ALBANIAN)
+                    .birthDate(LocalDate.of(2005, 2, 12))
+                    .registeredAt(LocalDateTime.now())
+                    .hasVoted(false)
+                    .email(email)
+
+                    .password(passwordEncoder().encode("Password1."))
+                    .role(RoleEnum.ADMIN)
+                    .build();
+
+            return repository.save(newUser);
+        });
         return user;
     }
 

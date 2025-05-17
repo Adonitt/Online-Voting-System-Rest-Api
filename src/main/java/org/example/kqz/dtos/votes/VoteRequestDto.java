@@ -12,11 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class VoteRequestDto {
-    @NotNull(message = "Party ID cannot be null")
-    private Long partyId;
 
-    @NotNull(message = "Candidate IDs cannot be null")
-    @Size(min = 1, max = 10, message = "You must select between 1 and 10 candidates")
-    private List<Long> candidateIds;
+    @NotNull
+    private Long party;
 
+    @NotNull
+    @Size(min = 1, max = 10)
+    private List<Long> candidates;
 }

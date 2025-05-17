@@ -66,8 +66,8 @@ public class ErrorController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    @ExceptionHandler(PartyNotExistsException.class)
-    public ResponseEntity<ErrorResponse> handleException(PartyNotExistsException e) {
+    @ExceptionHandler(PartyAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleException(PartyAlreadyExistsException e) {
         var errorResponse = new ErrorResponse("Party Already Exists with this name or number!", HttpStatus.CONFLICT.value(), null);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
@@ -90,6 +90,11 @@ public class ErrorController {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
+    @ExceptionHandler(PartyNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleException(PartyNotFoundException e) {
+        var errorResponse = new ErrorResponse("Party not found!", HttpStatus.NOT_FOUND.value(), null);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
 
 }
 

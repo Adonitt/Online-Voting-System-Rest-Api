@@ -1,6 +1,5 @@
 package org.example.kqz.mappers;
 
-import org.example.kqz.dtos.votes.VoteRequestDto;
 import org.example.kqz.dtos.votes.VoteResponseDto;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
@@ -14,16 +13,34 @@ import java.util.List;
 public interface VoteMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "timeStamp", expression = "java(java.time.LocalDateTime.now())")
     VoteEntity toEntity(UserEntity user, PartyEntity party, List<CandidatesEntity> candidates);
 
-    VoteResponseDto toResponseDto(VoteEntity vote);
+    @Mapping(target = "user", source = "user")
+    @Mapping(target = "party", source = "party")
+    @Mapping(target = "candidates", source = "candidates")
+    VoteResponseDto toResponseDto(VoteEntity entity);
 
-    // Mapping ndihmës për PartyEntity -> Long (id)
+    // Map UserEntity to email String
+    default String map(UserEntity user) {
+        return user == null ? null : user.getEmail();
+    }
+
+    // Map PartyEntity to party ID Long
     default Long map(PartyEntity party) {
-        if (party == null) {
-            return null;
-        }
-        return party.getId();
+        return party == null ? null : party.getId();
+    }
+
+    // Map a single CandidatesEntity to its ID
+    default Long map(CandidatesEntity candidate) {
+        return candidate == null ? null : candidate.getId();
+    }
+
+    // Map a list of CandidatesEntity to list of Long (candidate IDs)
+    default List<Long> map(List<CandidatesEntity> candidates) {
+        if (candidates == null) return null;
+        return candidates.stream()
+                .map(this::map)
+                .toList();
     }
 }
+

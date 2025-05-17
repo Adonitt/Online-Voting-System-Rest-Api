@@ -9,11 +9,11 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity(name = "votes")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity(name = "votes")
 public class VoteEntity {
 
     @Id
@@ -29,13 +29,14 @@ public class VoteEntity {
     @JoinColumn(name = "party_id", nullable = false)
     private PartyEntity party;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "vote_candidates",  // Tabela lidhëse
-            joinColumns = @JoinColumn(name = "vote_id"),  // Referencë nga vote_id
-            inverseJoinColumns = @JoinColumn(name = "candidate_id")  // Referencë nga candidate_id
+            name = "vote_candidates",
+            joinColumns = @JoinColumn(name = "vote_id"),
+            inverseJoinColumns = @JoinColumn(name = "candidate_id")
     )
     private List<CandidatesEntity> candidates;
+
 
     @Column(name = "time_stamp", nullable = false)
     private LocalDateTime timeStamp = LocalDateTime.now();
