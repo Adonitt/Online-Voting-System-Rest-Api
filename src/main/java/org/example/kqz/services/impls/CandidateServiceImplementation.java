@@ -10,6 +10,7 @@ import org.example.kqz.exceptions.CandidateNumberAlreadyExistsException;
 import org.example.kqz.exceptions.MustBe18ToVote;
 import org.example.kqz.exceptions.NotKosovoCitizenException;
 import org.example.kqz.exceptions.PersonalNumberAlreadyExists;
+import org.example.kqz.helpers.FileStorageHelper;
 import org.example.kqz.mappers.CandidatesMapper;
 import org.example.kqz.repositories.CandidatesRepository;
 import org.example.kqz.repositories.CitizensRepository;
@@ -29,6 +30,7 @@ public class CandidateServiceImplementation implements CandidateService {
     private final CandidatesMapper mapper;
     private final CitizensRepository citizensRepository;
     private final PartyRepository partyRepository;
+    private final FileStorageHelper fileStorageHelper;
 
     @Override
     public CRDCandidateRequestDto add(CRDCandidateRequestDto dto) {
@@ -46,6 +48,10 @@ public class CandidateServiceImplementation implements CandidateService {
         }
         entity.setCandidateNumber(maxCandidateNumber + 1);
 
+        if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
+            String fileName = fileStorageHelper.savePhoto(dto.getPhoto());
+            entity.setPhoto(fileName);
+        }
 
         entity.setCreatedAt(LocalDateTime.now());
         entity.setCreatedBy(AuthServiceImplementation.getLoggedInUserEmail() + " - " + AuthServiceImplementation.getLoggedInUserRole());
@@ -105,6 +111,12 @@ public class CandidateServiceImplementation implements CandidateService {
         if (existingCandidate.isPresent() && !existingCandidate.get().getId().equals(id)) {
             throw new CandidateNumberAlreadyExistsException("Candidate number already exists!");
         }
+
+        if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
+            String fileName = fileStorageHelper.savePhoto(dto.getPhoto());
+            candidateFromDB.setPhoto(fileName);
+        }
+
         candidateFromDB.setCandidateNumber(dto.getCandidateNumber());
 
         candidateFromDB.setUpdatedAt(LocalDateTime.now());

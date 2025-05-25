@@ -7,6 +7,7 @@ import org.example.kqz.dtos.parties.UpdatePartyDto;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
 import org.example.kqz.exceptions.PartyAlreadyExistsException;
+import org.example.kqz.helpers.FileStorageHelper;
 import org.example.kqz.mappers.PartiesMapper;
 import org.example.kqz.repositories.PartyRepository;
 import org.example.kqz.services.interfaces.PartyService;
@@ -21,6 +22,7 @@ public class PartyServiceImplementation implements PartyService {
     private final PartiesMapper mapper;
     private final PartyRepository repository;
     private final PartyRepository partyRepository;
+    private final FileStorageHelper fileStorageHelper;
 
     @Override
     public CRDPartyRequestDto add(CRDPartyRequestDto dto) {
@@ -32,6 +34,12 @@ public class PartyServiceImplementation implements PartyService {
                 candidate.setParty(entity);
             }
         }
+
+        if (dto.getSymbol() != null && !dto.getSymbol().isEmpty()) {
+            String fileName = fileStorageHelper.savePhoto(dto.getSymbol());
+            entity.setSymbol(fileName);
+        }
+
 
         entity.setCreatedAt(LocalDateTime.now());
         entity.setCreatedBy(AuthServiceImplementation.getLoggedInUserEmail());
@@ -79,10 +87,16 @@ public class PartyServiceImplementation implements PartyService {
         PartyEntity partyFromDB = partyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Party not found with ID: " + id));
 
+        if (dto.getSymbol() != null && !dto.getSymbol().isEmpty()) {
+            String fileName = fileStorageHelper.savePhoto(dto.getSymbol());
+            partyFromDB.setSymbol(fileName);
+        }
+
         partyFromDB.setName(dto.getName());
         partyFromDB.setNumberOfParty(dto.getNumberOfParty());
         partyFromDB.setSymbol(dto.getSymbol());
         partyFromDB.setDescription(dto.getDescription());
+
         partyFromDB.setUpdatedAt(LocalDateTime.now());
         partyFromDB.setUpdatedBy(AuthServiceImplementation.getLoggedInUserEmail());
 

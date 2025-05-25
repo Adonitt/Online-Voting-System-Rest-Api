@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.example.kqz.annotations.AtLeast18YearsOld;
 import org.example.kqz.entities.PartyEntity;
 import org.example.kqz.entities.enums.NationalityEnum;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,5 +51,7 @@ public class CRDCandidateRequestDto {
     private LocalDateTime createdAt;
 
     private NationalityEnum nationality;
+
+    private MultipartFile photo;
 
 }

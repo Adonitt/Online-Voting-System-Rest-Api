@@ -60,4 +60,7 @@ public class CandidatesEntity {
     @Column(name = "nationality", nullable = false)
     private NationalityEnum nationality;
 
+    @Column(name = "photo", nullable = false)
+    private String photo;
+
 }

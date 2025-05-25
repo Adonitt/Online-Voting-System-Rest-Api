@@ -4,10 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.dtos.candidates.CRDCandidateRequestDto;
 import org.example.kqz.dtos.candidates.UpdateCandidateRequestDto;
+import org.example.kqz.helpers.FileStorageHelper;
 import org.example.kqz.services.interfaces.CandidateService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CandidateController {
     private final CandidateService service;
+    private final FileStorageHelper fileStorageHelper;
 
     @GetMapping("")
     public ResponseEntity<List<CRDCandidateRequestDto>> findAll() {
