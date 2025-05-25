@@ -32,13 +32,18 @@ public class CandidateController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CRDCandidateRequestDto> create(@Valid @RequestBody CRDCandidateRequestDto dto) {
+    public ResponseEntity<CRDCandidateRequestDto> create(@Valid @RequestBody CRDCandidateRequestDto dto,
+                                                         @RequestPart(value = "photo", required = false) MultipartFile photo) {
+        dto.setPhoto(photo);
         CRDCandidateRequestDto saved = service.add(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UpdateCandidateRequestDto> modify(@Valid @RequestBody UpdateCandidateRequestDto dto, @PathVariable Long id) {
+    public ResponseEntity<UpdateCandidateRequestDto> modify(@Valid @RequestBody UpdateCandidateRequestDto dto,
+                                                            @PathVariable Long id,
+                                                            @RequestPart(value = "photo", required = false) MultipartFile photo) {
+        dto.setPhoto(photo);
         return ResponseEntity.ok(service.modify(dto, id));
     }
 

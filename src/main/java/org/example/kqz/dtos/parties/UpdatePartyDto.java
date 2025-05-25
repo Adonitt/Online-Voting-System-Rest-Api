@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -27,7 +28,7 @@ public class UpdatePartyDto {
     @NotNull(message = "Number of party must not be null")
     private String numberOfParty;
 
-    private String symbol;
+    private MultipartFile symbol;
 
     @NotNull(message = "Description must not be null")
     @NotBlank(message = "Description must not be empty")

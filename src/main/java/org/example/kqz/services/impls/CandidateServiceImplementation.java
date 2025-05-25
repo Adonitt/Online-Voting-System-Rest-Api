@@ -3,7 +3,6 @@ package org.example.kqz.services.impls;
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.dtos.candidates.CRDCandidateRequestDto;
 import org.example.kqz.dtos.candidates.UpdateCandidateRequestDto;
-import org.example.kqz.dtos.user.UpdateUserRequestDto;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
 import org.example.kqz.exceptions.CandidateNumberAlreadyExistsException;
@@ -18,10 +17,10 @@ import org.example.kqz.repositories.PartyRepository;
 import org.example.kqz.services.interfaces.CandidateService;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,9 +48,16 @@ public class CandidateServiceImplementation implements CandidateService {
         entity.setCandidateNumber(maxCandidateNumber + 1);
 
         if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
-            String fileName = fileStorageHelper.savePhoto(dto.getPhoto());
-            entity.setPhoto(fileName);
+            try {
+                String savedFileName = fileStorageHelper.uploadFile("uploads", dto.getPhoto().getOriginalFilename(), dto.getPhoto().getBytes());
+                entity.setPhoto(savedFileName);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read photo bytes", e);
+            }
+        } else {
+            entity.setPhoto("ks.jpg");
         }
+
 
         entity.setCreatedAt(LocalDateTime.now());
         entity.setCreatedBy(AuthServiceImplementation.getLoggedInUserEmail() + " - " + AuthServiceImplementation.getLoggedInUserRole());
@@ -113,9 +119,16 @@ public class CandidateServiceImplementation implements CandidateService {
         }
 
         if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
-            String fileName = fileStorageHelper.savePhoto(dto.getPhoto());
-            candidateFromDB.setPhoto(fileName);
+            try {
+                String savedFileName = fileStorageHelper.uploadFile("uploads", dto.getPhoto().getOriginalFilename(), dto.getPhoto().getBytes());
+                candidateFromDB.setPhoto(savedFileName);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read photo bytes", e);
+            }
+        } else {
+            candidateFromDB.setPhoto("ks.jpg");
         }
+
 
         candidateFromDB.setCandidateNumber(dto.getCandidateNumber());
 

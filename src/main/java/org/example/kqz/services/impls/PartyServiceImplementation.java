@@ -13,6 +13,7 @@ import org.example.kqz.repositories.PartyRepository;
 import org.example.kqz.services.interfaces.PartyService;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,10 +37,15 @@ public class PartyServiceImplementation implements PartyService {
         }
 
         if (dto.getSymbol() != null && !dto.getSymbol().isEmpty()) {
-            String fileName = fileStorageHelper.savePhoto(dto.getSymbol());
-            entity.setSymbol(fileName);
+            try {
+                String savedFileName = fileStorageHelper.uploadFile("uploads", dto.getSymbol().getOriginalFilename(), dto.getSymbol().getBytes());
+                entity.setSymbol(savedFileName);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read photo bytes", e);
+            }
+        } else {
+            entity.setSymbol("ks.jpg");
         }
-
 
         entity.setCreatedAt(LocalDateTime.now());
         entity.setCreatedBy(AuthServiceImplementation.getLoggedInUserEmail());
@@ -88,13 +94,18 @@ public class PartyServiceImplementation implements PartyService {
                 .orElseThrow(() -> new RuntimeException("Party not found with ID: " + id));
 
         if (dto.getSymbol() != null && !dto.getSymbol().isEmpty()) {
-            String fileName = fileStorageHelper.savePhoto(dto.getSymbol());
-            partyFromDB.setSymbol(fileName);
+            try {
+                String savedFileName = fileStorageHelper.uploadFile("uploads", dto.getSymbol().getOriginalFilename(), dto.getSymbol().getBytes());
+                partyFromDB.setSymbol(savedFileName);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read photo bytes", e);
+            }
+        } else {
+            partyFromDB.setSymbol("ks.jpg");
         }
 
         partyFromDB.setName(dto.getName());
         partyFromDB.setNumberOfParty(dto.getNumberOfParty());
-        partyFromDB.setSymbol(dto.getSymbol());
         partyFromDB.setDescription(dto.getDescription());
 
         partyFromDB.setUpdatedAt(LocalDateTime.now());

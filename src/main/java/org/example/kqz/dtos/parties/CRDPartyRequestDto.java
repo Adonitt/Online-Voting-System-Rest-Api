@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.kqz.entities.CandidatesEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +32,7 @@ public class CRDPartyRequestDto {
     @NotNull(message = "Number of party must not be null")
     private String numberOfParty;
 
-    private String symbol;
+    private MultipartFile symbol;
 
     @NotNull(message = "Description must not be null")
     @NotBlank(message = "Description must not be empty")

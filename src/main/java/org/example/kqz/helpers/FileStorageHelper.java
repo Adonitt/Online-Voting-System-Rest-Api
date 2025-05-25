@@ -7,23 +7,25 @@ import java.nio.file.*;
 import java.util.UUID;
 
 @Component
-public class FileStorageHelper {
+public class FileStorageHelper implements FileHelper {
 
-    private static final String UPLOAD_DIR = "uploads/";
+    private static final String BASE_FOLDER = "uploads";
 
-    public String savePhoto(String photo) {
+    @Override
+    public String uploadFile(String folder, String originalFilename, byte[] fileContent) {
         try {
-            String fileName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
-            Path path = Paths.get(UPLOAD_DIR);
-
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
+            Path uploadDir = Paths.get(BASE_FOLDER, folder);
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
             }
 
-            Files.copy(photo.getInputStream(), path.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-            return fileName;
+            String cleanFileName = UUID.randomUUID() + "_" + folder.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+            Path targetPath = uploadDir.resolve(cleanFileName);
+            Files.write(targetPath, fileContent);
+
+            return Paths.get(folder, cleanFileName).toString();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to store photo", e);
+            throw new RuntimeException("Failed to upload file", e);
         }
     }
 }
