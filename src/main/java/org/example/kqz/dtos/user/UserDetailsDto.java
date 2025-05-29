@@ -18,8 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDetailsDto {
-
-
     private Long id;
 
     private String personalNo;

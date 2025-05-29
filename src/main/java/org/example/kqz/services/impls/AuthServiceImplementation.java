@@ -6,16 +6,16 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.exceptions.ResourceNotFoundException;
+import org.example.kqz.security.AppUserDetails;
 import org.example.kqz.services.interfaces.AuthService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 
 import java.security.Key;
 import java.util.Date;
@@ -32,7 +32,6 @@ public class AuthServiceImplementation implements AuthService {
     // qe me marre ni value prej application.properties - qysh e kem shenu atje, duhet edhe ktu
     @Value("${jwt.secret}")
     private String secretKey;
-
     private final Long expirationTime = 86400000L;
 
     @Override
@@ -44,7 +43,16 @@ public class AuthServiceImplementation implements AuthService {
 
     @Override
     public String generateToken(UserDetails userDetails) {
-        Map<String, Objects> claims = new HashMap<>();
+        Map<String, Object> claims = new HashMap<>();
+
+        claims.put("authorities", userDetails.getAuthorities());
+
+        claims.put("id", ((AppUserDetails) userDetails).getUser().getId());
+        claims.put("role", ((AppUserDetails) userDetails).getUser().getRole());
+        claims.put("personalNo", ((AppUserDetails) userDetails).getUser().getPersonalNo());
+        claims.put("firstName", ((AppUserDetails) userDetails).getUser().getFirstName());
+        claims.put("lastName", ((AppUserDetails) userDetails).getUser().getLastName());
+        claims.put("nationality", ((AppUserDetails) userDetails).getUser().getNationality());
 
         // token builder pattern
         return Jwts.builder()
@@ -79,18 +87,16 @@ public class AuthServiceImplementation implements AuthService {
         // ne body qe na u kthy prej tokenit, po i thojme qe me marre veq sub, qe ne rastin tone osht email
     }
 
-    // Metoda për të marrë Authentication
+
     public static Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    // Metoda për të marrë email-in e përdoruesit të loguar
     public static String getLoggedInUserEmail() {
         Authentication authentication = getAuthentication();
-        return authentication.getName();  // Merr emailin ose username-in
+        return authentication.getName();
     }
 
-    // Metoda për të marrë rolin e përdoruesit të loguar
     public static String getLoggedInUserRole() {
         Authentication authentication = getAuthentication();
         return authentication.getAuthorities().stream()

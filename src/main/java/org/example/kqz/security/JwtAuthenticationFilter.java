@@ -15,6 +15,7 @@ import java.io.IOException;
 // onceperrequest, ekzekutohet sa here qe te bon request useri - e ne na vyn qe me validu tokenin
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final AuthService authService;
 
     @Override

@@ -21,7 +21,7 @@ public class ChangePasswordServiceImplementation implements ChangePasswordServic
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Old password is incorrect");
+            throw new IllegalArgumentException("Current password is incorrect");
         }
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
