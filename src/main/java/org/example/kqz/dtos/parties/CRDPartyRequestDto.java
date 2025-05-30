@@ -25,7 +25,13 @@ public class CRDPartyRequestDto {
     @NotNull(message = "Name must not be null")
     private String name;
 
+    @Size(min = 2, max = 50, message = "Abbreviation name must be between 2 and 50 characters")
+    @NotNull(message = "Abbreviation name must not be null")
+    @NotBlank(message = "Abbreviation name must not be empty")
+    private String abbreviationName;
+
     private List<CandidatesEntity> candidates;
+
 
     @Size(min = 3, max = 3, message = "Number of party must be 3 characters")
     @NotBlank(message = "Number of party must not be empty")

@@ -24,6 +24,9 @@ public class PartyEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @Column(name="abbreviation_name", nullable = false)
+    private String abbreviationName;
+
     @OneToMany(mappedBy = "party", fetch = FetchType.LAZY)
     private List<CandidatesEntity> candidates;
 

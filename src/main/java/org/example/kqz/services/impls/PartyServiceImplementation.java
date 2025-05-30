@@ -2,15 +2,19 @@ package org.example.kqz.services.impls;
 
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.dtos.parties.CRDPartyRequestDto;
+import org.example.kqz.dtos.parties.PartyDetailsDto;
 import org.example.kqz.dtos.parties.PartyListingDto;
 import org.example.kqz.dtos.parties.UpdatePartyDto;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
 import org.example.kqz.exceptions.PartyAlreadyExistsException;
+import org.example.kqz.exceptions.PartyHasCandidateException;
+import org.example.kqz.exceptions.PartyNotFoundException;
 import org.example.kqz.helpers.FileStorageHelper;
 import org.example.kqz.mappers.PartiesMapper;
 import org.example.kqz.repositories.PartyRepository;
 import org.example.kqz.services.interfaces.PartyService;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -44,7 +48,7 @@ public class PartyServiceImplementation implements PartyService {
                 throw new RuntimeException("Failed to read photo bytes", e);
             }
         } else {
-            entity.setSymbol("ks.jpg");
+            entity.setSymbol("/uploads/ks.jpeg");
         }
 
         entity.setCreatedAt(LocalDateTime.now());
@@ -74,18 +78,25 @@ public class PartyServiceImplementation implements PartyService {
     }
 
     @Override
-    public CRDPartyRequestDto findById(Long id) {
+    public PartyDetailsDto findById(Long id) {
         var partyEntity = repository.findById(id).orElseThrow(() -> new RuntimeException("Party not found"));
         System.out.println("Found Party: " + partyEntity.getName());
-        return mapper.toDto(partyEntity);
+        return mapper.toDetailsDto(partyEntity);
     }
 
 
     @Override
     public void removeById(Long id) {
-        findById(id);
-        repository.deleteById(id);
+        PartyEntity party = partyRepository.findById(id)
+                .orElseThrow(() -> new PartyNotFoundException("Party not found"));
+
+        if (!party.getCandidates().isEmpty()) {
+            throw new PartyHasCandidateException("Party cannot be deleted because it has candidates.");
+        }
+
+        partyRepository.deleteById(id);
     }
+
 
 
     @Override
@@ -107,6 +118,7 @@ public class PartyServiceImplementation implements PartyService {
         partyFromDB.setName(dto.getName());
         partyFromDB.setNumberOfParty(dto.getNumberOfParty());
         partyFromDB.setDescription(dto.getDescription());
+        partyFromDB.setAbbreviationName(dto.getAbbreviationName());
 
         partyFromDB.setUpdatedAt(LocalDateTime.now());
         partyFromDB.setUpdatedBy(AuthServiceImplementation.getLoggedInUserEmail());

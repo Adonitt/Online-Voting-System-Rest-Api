@@ -3,6 +3,7 @@ package org.example.kqz.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.dtos.parties.CRDPartyRequestDto;
+import org.example.kqz.dtos.parties.PartyDetailsDto;
 import org.example.kqz.dtos.parties.PartyListingDto;
 import org.example.kqz.dtos.parties.UpdatePartyDto;
 import org.example.kqz.services.interfaces.PartyService;
@@ -25,17 +26,16 @@ public class PartyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CRDPartyRequestDto> findById(@PathVariable Long id) {
-        CRDPartyRequestDto party = service.findById(id);
+    public ResponseEntity<PartyDetailsDto> findById(@PathVariable Long id) {
+        PartyDetailsDto party = service.findById(id);
         return ResponseEntity.ok(party);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CRDPartyRequestDto> create(@Valid @RequestBody CRDPartyRequestDto dto,
-                                                     @RequestPart(value = "symbol", required = false) MultipartFile symbol) {
-        dto.setSymbol(symbol);
+    public ResponseEntity<CRDPartyRequestDto> create(@ModelAttribute CRDPartyRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.add(dto));
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<UpdatePartyDto> modify(@Valid @RequestBody UpdatePartyDto dto,

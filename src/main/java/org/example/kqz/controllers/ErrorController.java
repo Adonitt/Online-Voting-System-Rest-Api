@@ -102,5 +102,11 @@ public class ErrorController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(PartyHasCandidateException.class)
+    public ResponseEntity<ErrorResponse> handleException(PartyHasCandidateException e) {
+        var errorResponse = new ErrorResponse("Party cannot be deleted since it has candidate!", HttpStatus.BAD_REQUEST.value(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
 }
 
