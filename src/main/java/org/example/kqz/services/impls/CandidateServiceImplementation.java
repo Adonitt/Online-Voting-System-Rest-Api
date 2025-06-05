@@ -9,18 +9,22 @@ import org.example.kqz.exceptions.CandidateNumberAlreadyExistsException;
 import org.example.kqz.exceptions.MustBe18ToVote;
 import org.example.kqz.exceptions.NotKosovoCitizenException;
 import org.example.kqz.exceptions.PersonalNumberAlreadyExists;
-import org.example.kqz.helpers.FileStorageHelper;
 import org.example.kqz.mappers.CandidatesMapper;
 import org.example.kqz.repositories.CandidatesRepository;
 import org.example.kqz.repositories.CitizensRepository;
 import org.example.kqz.repositories.PartyRepository;
 import org.example.kqz.services.interfaces.CandidateService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +33,15 @@ public class CandidateServiceImplementation implements CandidateService {
     private final CandidatesMapper mapper;
     private final CitizensRepository citizensRepository;
     private final PartyRepository partyRepository;
-    private final FileStorageHelper fileStorageHelper;
 
     @Override
-    public CRDCandidateRequestDto add(CRDCandidateRequestDto dto) {
+    public CRDCandidateRequestDto add(CRDCandidateRequestDto dto, MultipartFile photo) {
         validateCandidate(dto);
+
+        var fileName = "";
+
+        if (photo != null && !photo.isEmpty()) fileName = uploadFile(photo);
+
         var entity = mapper.toEntity(dto);
 
         PartyEntity party = partyRepository.findById(dto.getParty())
@@ -46,18 +54,7 @@ public class CandidateServiceImplementation implements CandidateService {
             maxCandidateNumber = 0L;
         }
         entity.setCandidateNumber(maxCandidateNumber + 1);
-
-        if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
-            try {
-                String savedFileName = fileStorageHelper.uploadFile("uploads", dto.getPhoto().getOriginalFilename(), dto.getPhoto().getBytes());
-                entity.setPhoto(savedFileName);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to read photo bytes", e);
-            }
-        } else {
-            entity.setPhoto("ks.jpg");
-        }
-
+        entity.setPhoto(fileName);
 
         entity.setCreatedAt(LocalDateTime.now());
         entity.setCreatedBy(AuthServiceImplementation.getLoggedInUserEmail() + " - " + AuthServiceImplementation.getLoggedInUserRole());
@@ -66,6 +63,18 @@ public class CandidateServiceImplementation implements CandidateService {
         return mapper.toDto(saved);
     }
 
+    public String uploadFile(MultipartFile imageFile) {
+        String filename = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+        Path uploadDir = Paths.get("uploads");
+        try {
+            Files.createDirectories(uploadDir); // Create uploads/ if it doesn't exist
+            Path imagePath = uploadDir.resolve(filename);
+            Files.write(imagePath, imageFile.getBytes());
+            return "uploads/" + filename;  // Return the path to the image file
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store image file", e);
+        }
+    }
 
     private void validateCandidate(CRDCandidateRequestDto dto) {
         if (!citizensRepository.existsByPersonalNoAndFirstNameAndLastNameAndBirthDate(dto.getPersonalNo(), dto.getFirstName(), dto.getLastName(), dto.getBirthDate())) {
@@ -102,33 +111,28 @@ public class CandidateServiceImplementation implements CandidateService {
     }
 
     @Override
-    public UpdateCandidateRequestDto modify(UpdateCandidateRequestDto dto, Long id) {
+    public UpdateCandidateRequestDto modify(UpdateCandidateRequestDto dto, Long id, MultipartFile photo) {
         CandidatesEntity candidateFromDB = candidateRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Candidate not found with ID: " + id));
 
-        candidateFromDB.setBirthDate(dto.getBirthDate());
-        candidateFromDB.setNationality(dto.getNationality());
+        var fileName = "";
+        if (photo != null && !photo.isEmpty()) fileName = uploadFile(photo);
 
         PartyEntity party = partyRepository.findById(dto.getParty())
                 .orElseThrow(() -> new RuntimeException("Party not found with ID: " + dto.getParty()));
-
 
         var existingCandidate = candidateRepository.findByCandidateNumber(dto.getCandidateNumber());
         if (existingCandidate.isPresent() && !existingCandidate.get().getId().equals(id)) {
             throw new CandidateNumberAlreadyExistsException("Candidate number already exists!");
         }
 
-        if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
-            try {
-                String savedFileName = fileStorageHelper.uploadFile("uploads", dto.getPhoto().getOriginalFilename(), dto.getPhoto().getBytes());
-                candidateFromDB.setPhoto(savedFileName);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to read photo bytes", e);
-            }
+        if (fileName.isBlank()) {
+            candidateFromDB.setPhoto(candidateFromDB.getPhoto());
         } else {
-            candidateFromDB.setPhoto("ks.jpg");
+            candidateFromDB.setPhoto(fileName);
         }
-
+        candidateFromDB.setBirthDate(dto.getBirthDate());
+        candidateFromDB.setNationality(dto.getNationality());
 
         candidateFromDB.setCandidateNumber(dto.getCandidateNumber());
 

@@ -3,11 +3,12 @@ package org.example.kqz.services.interfaces;
 import org.example.kqz.dtos.candidates.CRDCandidateRequestDto;
 import org.example.kqz.dtos.candidates.UpdateCandidateRequestDto;
 import org.example.kqz.services.base_services.*;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface CandidateService extends
         FindAll<CRDCandidateRequestDto>,
         FindById<CRDCandidateRequestDto, Long>,
-        Addable<CRDCandidateRequestDto>,
-        Modifiable<UpdateCandidateRequestDto, Long>,
         Removable<Long> {
+    CRDCandidateRequestDto add(CRDCandidateRequestDto dto, MultipartFile photo);
+    UpdateCandidateRequestDto modify(UpdateCandidateRequestDto dto, Long id, MultipartFile photo);
 }

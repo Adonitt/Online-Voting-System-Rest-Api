@@ -37,6 +37,6 @@ public class UpdateCandidateRequestDto {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    private MultipartFile photo;
+//    private MultipartFile photo;
 
 }

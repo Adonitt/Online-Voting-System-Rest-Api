@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.dtos.candidates.CRDCandidateRequestDto;
 import org.example.kqz.dtos.candidates.UpdateCandidateRequestDto;
-import org.example.kqz.helpers.FileStorageHelper;
 import org.example.kqz.services.interfaces.CandidateService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CandidateController {
     private final CandidateService service;
-    private final FileStorageHelper fileStorageHelper;
 
     @GetMapping("")
     public ResponseEntity<List<CRDCandidateRequestDto>> findAll() {
@@ -32,19 +30,22 @@ public class CandidateController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CRDCandidateRequestDto> create(@Valid @RequestBody CRDCandidateRequestDto dto,
-                                                         @RequestPart(value = "photo", required = false) MultipartFile photo) {
-        dto.setPhoto(photo);
-        CRDCandidateRequestDto saved = service.add(dto);
+    public ResponseEntity<CRDCandidateRequestDto> create(
+            @RequestPart("dto") @Valid CRDCandidateRequestDto dto,
+            @RequestPart(value = "photo", required = false) MultipartFile photo) {
+
+        CRDCandidateRequestDto saved = service.add(dto, photo);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UpdateCandidateRequestDto> modify(@Valid @RequestBody UpdateCandidateRequestDto dto,
-                                                            @PathVariable Long id,
-                                                            @RequestPart(value = "photo", required = false) MultipartFile photo) {
-        dto.setPhoto(photo);
-        return ResponseEntity.ok(service.modify(dto, id));
+    public ResponseEntity<UpdateCandidateRequestDto> modify(
+            @RequestPart("dto") @Valid UpdateCandidateRequestDto dto,
+            @RequestPart(value = "photo", required = false) MultipartFile photo,
+            @PathVariable Long id) {
+
+        UpdateCandidateRequestDto updated = service.modify(dto, id, photo);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")

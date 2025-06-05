@@ -10,16 +10,19 @@ import org.example.kqz.entities.PartyEntity;
 import org.example.kqz.exceptions.PartyAlreadyExistsException;
 import org.example.kqz.exceptions.PartyHasCandidateException;
 import org.example.kqz.exceptions.PartyNotFoundException;
-import org.example.kqz.helpers.FileStorageHelper;
 import org.example.kqz.mappers.PartiesMapper;
 import org.example.kqz.repositories.PartyRepository;
 import org.example.kqz.services.interfaces.PartyService;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,11 +30,15 @@ public class PartyServiceImplementation implements PartyService {
     private final PartiesMapper mapper;
     private final PartyRepository repository;
     private final PartyRepository partyRepository;
-    private final FileStorageHelper fileStorageHelper;
 
     @Override
-    public CRDPartyRequestDto add(CRDPartyRequestDto dto) {
+    public CRDPartyRequestDto create(CRDPartyRequestDto dto, MultipartFile symbol) {
         validateParty(dto);
+
+        var fileName = "";
+
+        if (symbol != null && !symbol.isEmpty()) fileName = uploadFile(symbol);
+
         var entity = mapper.toEntity(dto);
 
         if (entity.getCandidates() != null && !entity.getCandidates().isEmpty()) {
@@ -39,17 +46,7 @@ public class PartyServiceImplementation implements PartyService {
                 candidate.setParty(entity);
             }
         }
-
-        if (dto.getSymbol() != null && !dto.getSymbol().isEmpty()) {
-            try {
-                String savedFileName = fileStorageHelper.uploadFile("uploads", dto.getSymbol().getOriginalFilename(), dto.getSymbol().getBytes());
-                entity.setSymbol(savedFileName);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to read photo bytes", e);
-            }
-        } else {
-            entity.setSymbol("/uploads/ks.jpeg");
-        }
+        entity.setSymbol(fileName);
 
         entity.setCreatedAt(LocalDateTime.now());
         entity.setCreatedBy(AuthServiceImplementation.getLoggedInUserEmail());
@@ -59,6 +56,18 @@ public class PartyServiceImplementation implements PartyService {
         return mapper.toDto(savedEntity);
     }
 
+    public String uploadFile(MultipartFile imageFile) {
+        String filename = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+        Path uploadDir = Paths.get("uploads");
+        try {
+            Files.createDirectories(uploadDir); // Create uploads/ if it doesn't exist
+            Path imagePath = uploadDir.resolve(filename);
+            Files.write(imagePath, imageFile.getBytes());
+            return "uploads/" + filename;  // Return the path to the image file
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store image file", e);
+        }
+    }
 
     private void validateParty(CRDPartyRequestDto dto) {
         if (repository.existsByName(dto.getName())) {
@@ -98,27 +107,31 @@ public class PartyServiceImplementation implements PartyService {
     }
 
 
-
     @Override
-    public UpdatePartyDto modify(UpdatePartyDto dto, Long id) {
+    public UpdatePartyDto modify(UpdatePartyDto dto, Long id, MultipartFile symbol) {
         PartyEntity partyFromDB = partyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Party not found with ID: " + id));
 
-        if (dto.getSymbol() != null && !dto.getSymbol().isEmpty()) {
-            try {
-                String savedFileName = fileStorageHelper.uploadFile("uploads", dto.getSymbol().getOriginalFilename(), dto.getSymbol().getBytes());
-                partyFromDB.setSymbol(savedFileName);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to read photo bytes", e);
-            }
-        } else {
-            partyFromDB.setSymbol("ks.jpg");
-        }
+        var fileName = "";
+
+        if (symbol != null && !symbol.isEmpty()) fileName = uploadFile(symbol);
+
+        if (fileName.isBlank()) {
+            partyFromDB.setSymbol(partyFromDB.getSymbol());
+        } else
+            partyFromDB.setSymbol(fileName);
 
         partyFromDB.setName(dto.getName());
         partyFromDB.setNumberOfParty(dto.getNumberOfParty());
         partyFromDB.setDescription(dto.getDescription());
         partyFromDB.setAbbreviationName(dto.getAbbreviationName());
+
+        if (fileName.isBlank()) {
+            partyFromDB.setSymbol(partyFromDB.getSymbol()); // KEEP existing
+        } else {
+            partyFromDB.setSymbol(fileName); // SET new
+        }
+
 
         partyFromDB.setUpdatedAt(LocalDateTime.now());
         partyFromDB.setUpdatedBy(AuthServiceImplementation.getLoggedInUserEmail());

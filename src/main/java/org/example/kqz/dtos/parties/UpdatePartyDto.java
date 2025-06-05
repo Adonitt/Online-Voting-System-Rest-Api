@@ -33,7 +33,7 @@ public class UpdatePartyDto {
     @NotNull(message = "Number of party must not be null")
     private String numberOfParty;
 
-    private MultipartFile symbol;
+//    private String symbol;
 
     @NotNull(message = "Description must not be null")
     @NotBlank(message = "Description must not be empty")

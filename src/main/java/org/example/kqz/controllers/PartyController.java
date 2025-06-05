@@ -8,6 +8,7 @@ import org.example.kqz.dtos.parties.PartyListingDto;
 import org.example.kqz.dtos.parties.UpdatePartyDto;
 import org.example.kqz.services.interfaces.PartyService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,19 +32,24 @@ public class PartyController {
         return ResponseEntity.ok(party);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<CRDPartyRequestDto> create(@ModelAttribute CRDPartyRequestDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.add(dto));
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CRDPartyRequestDto> create(@RequestPart("data") @Valid @ModelAttribute CRDPartyRequestDto dto,
+                                                     @RequestPart(value = "symbol", required = false) MultipartFile symbol
+    ) {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto, symbol));
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<UpdatePartyDto> modify(@Valid @RequestBody UpdatePartyDto dto,
-                                                 @PathVariable Long id,
-                                                 @RequestPart(value = "symbol", required = false) MultipartFile symbol) {
-        dto.setSymbol(symbol);
-        return ResponseEntity.ok(service.modify(dto, id));
+    public ResponseEntity<UpdatePartyDto> modify(
+            @PathVariable Long id,
+            @RequestPart("data") @Valid UpdatePartyDto dto, // ✅ Remove @RequestBody
+            @RequestPart(value = "symbol", required = false) MultipartFile symbol
+    ) {
+        return ResponseEntity.ok(service.modify(dto, id, symbol));
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeById(@PathVariable Long id) {

@@ -52,6 +52,6 @@ public class CRDCandidateRequestDto {
 
     private NationalityEnum nationality;
 
-    private MultipartFile photo;
+//    private MultipartFile photo;
 
 }

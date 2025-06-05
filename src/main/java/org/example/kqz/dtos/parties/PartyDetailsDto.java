@@ -23,7 +23,7 @@ public class PartyDetailsDto {
 
     private String numberOfParty;
 
-    private MultipartFile symbol;
+    private String symbol;
 
     private String description;
 
