@@ -98,21 +98,22 @@ public class VoteResultsServiceImplementation implements VoteResultsService {
     public List<UserVoteDto> getUserVotes(Long userId) {
         List<VoteEntity> votes = voteRepository.findByUserId(userId);
 
-
         return votes.stream().map(vote -> {
-            List<Long> candidateIds = vote.getCandidates().stream()
-                    .map(CandidatesEntity::getId)
-                    .toList();
+            List<String> candidateNames = vote.getCandidates().stream()
+                    .map(candidate -> candidate.getFirstName() + " " + candidate.getLastName())
+                    .toList();  // ✅ Combine first and last name
+
             return new UserVoteDto(
                     vote.getUser().getId(),
                     vote.getUser().getEmail(),
                     vote.getParty().getId(),
                     vote.getParty().getName(),
-                    candidateIds,
+                    candidateNames,  // ✅ use candidateNames, not candidateIds
                     vote.getTimeStamp()
             );
         }).toList();
     }
+
 
 
     public List<CityVoteSummaryDto> getCityPartyVoteSummary() {

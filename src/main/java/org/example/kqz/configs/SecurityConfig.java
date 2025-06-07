@@ -46,7 +46,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 
         http.authorizeHttpRequests(auth -> auth
-                        // Allow public login endpoints
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/register").permitAll()
@@ -54,21 +53,24 @@ public class SecurityConfig {
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/enums/**").permitAll()
 
-                        // Allow authenticated users to change password
                         .requestMatchers(HttpMethod.PUT, "/api/v1/auth/change-password").authenticated()
 
-                        // Allow USER and ADMIN roles to get their own profile or user info
-                        // (adjust if you want to allow e.g. /api/v1/users/{id} for USER only if they match the id)
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/profile").hasAnyRole(RoleEnum.USER.name(), RoleEnum.ADMIN.name())
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasAnyRole(RoleEnum.USER.name(), RoleEnum.ADMIN.name())
 
-                        // Voting endpoints accessible to USER role
-                        .requestMatchers("/api/v1/votes/**").hasRole(RoleEnum.USER.name())
-                        .requestMatchers("/api/votes/results/**").hasAnyRole(RoleEnum.USER.name(), RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/api/v1/votes/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/votes/**").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "api/v1/parties/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/parties/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/parties").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/parties/{id}").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/v1/parties").hasRole(RoleEnum.ADMIN.name()).
 
-                        // All other /api/v1/** endpoints restricted to ADMIN only
+                        requestMatchers(HttpMethod.GET, "/api/v1/candidates").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "a/pi/v1/candidates/{id}").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/v1/parties").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/api/v1/candidates/{id}").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
                         .requestMatchers(HttpMethod.POST, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
                         .requestMatchers(HttpMethod.PUT, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())

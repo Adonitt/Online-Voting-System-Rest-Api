@@ -5,7 +5,6 @@ import org.example.kqz.dtos.results.CandidateVoteResultDto;
 import org.example.kqz.dtos.results.CityVoteSummaryDto;
 import org.example.kqz.dtos.results.PartyVoteResultsDto;
 import org.example.kqz.dtos.results.UserVoteDto;
-import org.example.kqz.entities.enums.CityEnum;
 import org.example.kqz.services.interfaces.VoteResultsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/votes/results")
+@RequestMapping("/api/v1/votes/results")
 @RequiredArgsConstructor
 public class VoteResultsController {
 
@@ -30,7 +29,6 @@ public class VoteResultsController {
     public PartyVoteResultsDto getPartyResultById(@PathVariable Long id) {
         return voteResultService.getPartyResultById(id);
     }
-
 
     @GetMapping("/candidate")
     public List<CandidateVoteResultDto> getCandidateResults() {

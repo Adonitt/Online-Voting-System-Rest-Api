@@ -15,6 +15,6 @@ public class UserVoteDto {
     private String user;
     private Long partyId;
     private String party;
-    private List<Long> candidateIds;
+    private List<String> candidateNames;
     private LocalDateTime voteTimestamp;
 }

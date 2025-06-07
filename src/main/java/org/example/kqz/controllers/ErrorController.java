@@ -43,7 +43,7 @@ public class ErrorController {
 
     @ExceptionHandler(MustBe18ToVote.class)
     public ResponseEntity<ErrorResponse> handleException(MustBe18ToVote e) {
-        var errorResponse = new ErrorResponse("User must be more than 18 years old to register!", HttpStatus.BAD_REQUEST.value(), null);
+        var errorResponse = new ErrorResponse("User must be more than 18 years old to vote!", HttpStatus.BAD_REQUEST.value(), null);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 

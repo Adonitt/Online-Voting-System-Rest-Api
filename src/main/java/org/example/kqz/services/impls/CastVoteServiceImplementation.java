@@ -50,6 +50,7 @@ public class CastVoteServiceImplementation implements CastVoteService {
 
         user.setHasVoted(true);
         userRepository.save(user);
+        voteRepository.save(savedVote);
 
         return voteMapper.toResponseDto(savedVote);
     }
@@ -69,7 +70,7 @@ public class CastVoteServiceImplementation implements CastVoteService {
         }
 
         List<Long> candidateIds = voteRequestDto.getCandidates();
-        if (candidateIds.size() < 1 || candidateIds.size() > 10) {
+        if (candidateIds.size() < 1 || candidateIds.size() > 5) {
             throw new MustChooseBetween1And10Candidates("You must select between 1 and 10 candidates.");
         }
 
@@ -86,7 +87,6 @@ public class CastVoteServiceImplementation implements CastVoteService {
 
         return user;
     }
-
 
 
 }

@@ -54,6 +54,7 @@ public class AuthServiceImplementation implements AuthService {
         claims.put("firstName", ((AppUserDetails) userDetails).getUser().getFirstName());
         claims.put("lastName", ((AppUserDetails) userDetails).getUser().getLastName());
         claims.put("nationality", ((AppUserDetails) userDetails).getUser().getNationality());
+        claims.put("hasVoted", ((AppUserDetails) userDetails).getUser().isHasVoted());
 
         // token builder pattern
         return Jwts.builder()

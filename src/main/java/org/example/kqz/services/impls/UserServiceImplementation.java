@@ -61,7 +61,7 @@ public class UserServiceImplementation implements UserService {
             throw new PersonalNumberAlreadyExists("User with personal number " + dto.getPersonalNo() + " already exists");
         }
 
-        if (dto.getBirthDate().isAfter(LocalDate.now().minusYears(18))) {
+        if (dto.getBirthDate() == null || dto.getBirthDate().isAfter(LocalDate.now().minusYears(18))) {
             throw new MustBe18ToVote("User must be at least 18 years old to register");
         }
     }
