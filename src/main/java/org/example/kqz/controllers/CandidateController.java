@@ -3,6 +3,7 @@ package org.example.kqz.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.dtos.candidates.CRDCandidateRequestDto;
+import org.example.kqz.dtos.candidates.CandidateListingDto;
 import org.example.kqz.dtos.candidates.UpdateCandidateRequestDto;
 import org.example.kqz.services.interfaces.CandidateService;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class CandidateController {
     private final CandidateService service;
 
     @GetMapping("")
-    public ResponseEntity<List<CRDCandidateRequestDto>> findAll() {
+    public ResponseEntity<List<CandidateListingDto>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 

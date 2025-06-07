@@ -44,7 +44,7 @@ public class PartyController {
     @PutMapping("/{id}")
     public ResponseEntity<UpdatePartyDto> modify(
             @PathVariable Long id,
-            @RequestPart("data") @Valid UpdatePartyDto dto, // ✅ Remove @RequestBody
+            @RequestPart("data") @Valid UpdatePartyDto dto,
             @RequestPart(value = "symbol", required = false) MultipartFile symbol
     ) {
         return ResponseEntity.ok(service.modify(dto, id, symbol));

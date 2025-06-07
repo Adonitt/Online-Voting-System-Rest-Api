@@ -1,12 +1,15 @@
 package org.example.kqz.mappers;
 
 import org.example.kqz.dtos.candidates.CRDCandidateRequestDto;
+import org.example.kqz.dtos.candidates.CandidateListingDto;
 import org.example.kqz.dtos.candidates.UpdateCandidateRequestDto;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CandidatesMapper extends ZSimpleMapper<CandidatesEntity, CRDCandidateRequestDto> {
@@ -20,6 +23,8 @@ public interface CandidatesMapper extends ZSimpleMapper<CandidatesEntity, CRDCan
     CandidatesEntity toEntity(CRDCandidateRequestDto dto);
 
     UpdateCandidateRequestDto toUpdateDto(CandidatesEntity entity);
+
+    List<CandidateListingDto> toListingDto(List<CandidatesEntity> entity);
 
     // Metodë ndihmëse për MapStruct - konverton PartyEntity në Long (party id)
     default Long map(PartyEntity party) {
@@ -39,17 +44,4 @@ public interface CandidatesMapper extends ZSimpleMapper<CandidatesEntity, CRDCan
         return party;
     }
 
-    // Map MultipartFile (DTO) to String (Entity)
-    default String map(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            return null;
-        }
-        return file.getOriginalFilename(); // or any logic for filename
-    }
-
-    // Optional: Map String (Entity) back to MultipartFile (DTO) if needed
-    default MultipartFile map(String filename) {
-        return null; // or throw new UnsupportedOperationException();
-    }
 }
-

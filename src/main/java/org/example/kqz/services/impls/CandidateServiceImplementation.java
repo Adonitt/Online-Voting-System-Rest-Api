@@ -2,6 +2,7 @@ package org.example.kqz.services.impls;
 
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.dtos.candidates.CRDCandidateRequestDto;
+import org.example.kqz.dtos.candidates.CandidateListingDto;
 import org.example.kqz.dtos.candidates.UpdateCandidateRequestDto;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
@@ -86,7 +87,7 @@ public class CandidateServiceImplementation implements CandidateService {
         }
 
         if (candidateRepository.existsByPersonalNo(dto.getPersonalNo())) {
-            throw new PersonalNumberAlreadyExists("Personal number " + dto.getPersonalNo() + " already exists");
+            throw new PersonalNumberAlreadyExists("A candidate with Personal number " + dto.getPersonalNo() + " already exists");
         }
 
         if (dto.getBirthDate().isAfter(LocalDate.now().minusYears(18))) {
@@ -98,9 +99,9 @@ public class CandidateServiceImplementation implements CandidateService {
     }
 
     @Override
-    public List<CRDCandidateRequestDto> findAll() {
+    public List<CandidateListingDto> findAll() {
         var candidatesList = candidateRepository.findAll();
-        return mapper.toDtoList(candidatesList);
+        return mapper.toListingDto(candidatesList);
     }
 
     @Override
@@ -122,6 +123,7 @@ public class CandidateServiceImplementation implements CandidateService {
                 .orElseThrow(() -> new RuntimeException("Party not found with ID: " + dto.getParty()));
 
         var existingCandidate = candidateRepository.findByCandidateNumber(dto.getCandidateNumber());
+
         if (existingCandidate.isPresent() && !existingCandidate.get().getId().equals(id)) {
             throw new CandidateNumberAlreadyExistsException("Candidate number already exists!");
         }
@@ -131,13 +133,13 @@ public class CandidateServiceImplementation implements CandidateService {
         } else {
             candidateFromDB.setPhoto(fileName);
         }
-        candidateFromDB.setBirthDate(dto.getBirthDate());
         candidateFromDB.setNationality(dto.getNationality());
 
-        candidateFromDB.setCandidateNumber(dto.getCandidateNumber());
+        candidateFromDB.setCandidateNumber(candidateFromDB.getCandidateNumber());
+
+        candidateFromDB.setParty(party);
 
         candidateFromDB.setUpdatedAt(LocalDateTime.now());
-        candidateFromDB.setParty(party);
         candidateFromDB.setUpdatedBy(AuthServiceImplementation.getLoggedInUserEmail());
 
         CandidatesEntity updatedCandidate = candidateRepository.save(candidateFromDB);

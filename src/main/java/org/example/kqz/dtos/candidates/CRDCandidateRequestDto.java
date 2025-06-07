@@ -52,6 +52,9 @@ public class CRDCandidateRequestDto {
 
     private NationalityEnum nationality;
 
-//    private MultipartFile photo;
+    private String photo;
 
+    private String updatedBy;
+
+    private LocalDateTime updatedAt;
 }

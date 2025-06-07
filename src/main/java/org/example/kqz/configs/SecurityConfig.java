@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/register").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/enums/**").permitAll()
 
                         // Allow authenticated users to change password
                         .requestMatchers(HttpMethod.PUT, "/api/v1/auth/change-password").authenticated()
