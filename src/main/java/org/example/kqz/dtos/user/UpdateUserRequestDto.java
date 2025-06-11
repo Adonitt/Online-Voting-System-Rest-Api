@@ -27,4 +27,6 @@ public class UpdateUserRequestDto {
 
     private CityEnum city;
 
+    private String email;
+
 }
