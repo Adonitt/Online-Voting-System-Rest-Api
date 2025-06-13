@@ -37,7 +37,12 @@ public class VoteResultsController {
 
     @GetMapping("/user/{userId}")
     public List<UserVoteDto> getUserVotes(@PathVariable Long userId) {
-        return voteResultService.getUserVotes(userId);
+        return voteResultService.getUserVotesById(userId);
+    }
+
+    @GetMapping("/all-users")
+    public List<UserVoteDto> getAllUserVotes() {
+        return voteResultService.getAllUserVotes();
     }
 
     @GetMapping("/city-summary")

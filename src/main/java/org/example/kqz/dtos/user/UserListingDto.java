@@ -25,6 +25,7 @@ public class UserListingDto {
     private boolean hasVoted = false;
 
     private RoleEnum role;
+
     private CityEnum city;
 
 }

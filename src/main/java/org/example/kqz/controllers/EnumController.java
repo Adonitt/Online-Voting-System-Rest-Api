@@ -1,5 +1,6 @@
 package org.example.kqz.controllers;
 
+import org.example.kqz.entities.enums.CityEnum;
 import org.example.kqz.entities.enums.NationalityEnum;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,4 +22,13 @@ public class EnumController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(values);
     }
+
+    @GetMapping("/cities")
+    public ResponseEntity<List<String>> getCities() {
+        List<String> values = Arrays.stream(CityEnum.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(values);
+    }
+
 }

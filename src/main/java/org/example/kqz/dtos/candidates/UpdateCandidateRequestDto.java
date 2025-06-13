@@ -30,6 +30,5 @@ public class UpdateCandidateRequestDto {
 
     private LocalDateTime updatedAt;
 
-//    private MultipartFile photo;
 
 }

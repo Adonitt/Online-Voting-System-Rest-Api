@@ -14,7 +14,6 @@ import org.example.kqz.services.interfaces.VoteResultsService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -95,25 +94,44 @@ public class VoteResultsServiceImplementation implements VoteResultsService {
                 .toList();
     }
 
-    public List<UserVoteDto> getUserVotes(Long userId) {
+    public List<UserVoteDto> getUserVotesById(Long userId) {
         List<VoteEntity> votes = voteRepository.findByUserId(userId);
 
         return votes.stream().map(vote -> {
             List<String> candidateNames = vote.getCandidates().stream()
                     .map(candidate -> candidate.getFirstName() + " " + candidate.getLastName())
-                    .toList();  // ✅ Combine first and last name
+                    .toList();
 
             return new UserVoteDto(
                     vote.getUser().getId(),
-                    vote.getUser().getEmail(),
+                    vote.getUser().getFirstName() + " " + vote.getUser().getLastName(),
                     vote.getParty().getId(),
                     vote.getParty().getName(),
-                    candidateNames,  // ✅ use candidateNames, not candidateIds
+                    candidateNames,
                     vote.getTimeStamp()
             );
         }).toList();
     }
 
+    public List<UserVoteDto> getAllUserVotes() {
+        List<VoteEntity> votes = voteRepository.findAll();
+        // 2. Map each VoteEntity → UserVoteDto
+        return votes.stream().map(vote -> {
+            List<String> candidateNames = vote.getCandidates()
+                    .stream()
+                    .map(c -> c.getFirstName() + " " + c.getLastName())
+                    .toList();
+
+            return new UserVoteDto(
+                    vote.getUser().getId(),
+                    vote.getUser().getFirstName() + " " + vote.getUser().getLastName(),
+                    vote.getParty().getId(),
+                    vote.getParty().getName(),
+                    candidateNames,
+                    vote.getTimeStamp()
+            );
+        }).toList();
+    }
 
 
     public List<CityVoteSummaryDto> getCityPartyVoteSummary() {
@@ -146,7 +164,6 @@ public class VoteResultsServiceImplementation implements VoteResultsService {
 
         return result;
     }
-
 
 
 }

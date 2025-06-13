@@ -41,6 +41,7 @@ public class UserServiceImplementation implements UserService {
 
         var savedUser = userRepository.save(entity);
 
+
         return mapper.toDto(savedUser);
     }
 
@@ -108,6 +109,15 @@ public class UserServiceImplementation implements UserService {
         userFromDB.setUpdatedAt(LocalDateTime.now());
         userFromDB.setUpdatedBy(updatedBy);
         userFromDB.setCity(dto.getCity());
+
+        if (dto.getEmail() != null) {
+            userFromDB.setEmail(dto.getEmail());
+        } else {
+            userFromDB.setEmail(userFromDB.getEmail());
+        }
+
+        userFromDB.setUpdatedBy(AuthServiceImplementation.getLoggedInUserEmail());
+        userFromDB.setUpdatedAt(LocalDateTime.now());
 
         var updatedUser = userRepository.save(userFromDB);
         return mapper.toUpdateDto(updatedUser);

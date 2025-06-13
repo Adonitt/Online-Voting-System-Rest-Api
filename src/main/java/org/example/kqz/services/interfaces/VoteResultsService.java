@@ -4,7 +4,6 @@ import org.example.kqz.dtos.results.CandidateVoteResultDto;
 import org.example.kqz.dtos.results.CityVoteSummaryDto;
 import org.example.kqz.dtos.results.PartyVoteResultsDto;
 import org.example.kqz.dtos.results.UserVoteDto;
-import org.example.kqz.entities.enums.CityEnum;
 
 import java.util.List;
 
@@ -13,9 +12,12 @@ public interface VoteResultsService {
 
     List<CandidateVoteResultDto> getCandidateResults();
 
-    List<UserVoteDto> getUserVotes(Long userId);
+    List<UserVoteDto> getUserVotesById(Long userId);
+
+    List<UserVoteDto> getAllUserVotes();
 
     PartyVoteResultsDto getPartyResultById(Long partyId);
 
-    public List<CityVoteSummaryDto> getCityPartyVoteSummary();
+    List<CityVoteSummaryDto> getCityPartyVoteSummary();
+
 }

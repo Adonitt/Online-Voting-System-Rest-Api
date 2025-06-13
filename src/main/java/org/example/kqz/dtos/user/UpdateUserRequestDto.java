@@ -19,12 +19,14 @@ public class UpdateUserRequestDto {
     @Positive
     private Long id;
 
-    private boolean hasVoted = false;
-
-    private RoleEnum role;
 
     private NationalityEnum nationality;
 
     private CityEnum city;
 
+    private String email;
+
+    private String updatedBy;
+
+    private LocalDateTime updatedAt;
 }

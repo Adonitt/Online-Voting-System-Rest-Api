@@ -116,11 +116,6 @@ public class PartyServiceImplementation implements PartyService {
 
         if (symbol != null && !symbol.isEmpty()) fileName = uploadFile(symbol);
 
-        if (fileName.isBlank()) {
-            partyFromDB.setSymbol(partyFromDB.getSymbol());
-        } else
-            partyFromDB.setSymbol(fileName);
-
         partyFromDB.setName(dto.getName());
         partyFromDB.setNumberOfParty(dto.getNumberOfParty());
         partyFromDB.setDescription(dto.getDescription());

@@ -55,7 +55,6 @@ public class CandidatesEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-
     @Enumerated(EnumType.STRING)
     @Column(name = "nationality", nullable = false)
     private NationalityEnum nationality;

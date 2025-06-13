@@ -54,6 +54,7 @@ public class CandidateServiceImplementation implements CandidateService {
         if (maxCandidateNumber == null) {
             maxCandidateNumber = 0L;
         }
+
         entity.setCandidateNumber(maxCandidateNumber + 1);
         entity.setPhoto(fileName);
 
@@ -68,10 +69,10 @@ public class CandidateServiceImplementation implements CandidateService {
         String filename = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
         Path uploadDir = Paths.get("uploads");
         try {
-            Files.createDirectories(uploadDir); // Create uploads/ if it doesn't exist
+            Files.createDirectories(uploadDir);
             Path imagePath = uploadDir.resolve(filename);
             Files.write(imagePath, imageFile.getBytes());
-            return "uploads/" + filename;  // Return the path to the image file
+            return "uploads/" + filename;
         } catch (IOException e) {
             throw new RuntimeException("Failed to store image file", e);
         }
@@ -133,12 +134,10 @@ public class CandidateServiceImplementation implements CandidateService {
         } else {
             candidateFromDB.setPhoto(fileName);
         }
+
         candidateFromDB.setNationality(dto.getNationality());
-
         candidateFromDB.setCandidateNumber(candidateFromDB.getCandidateNumber());
-
         candidateFromDB.setParty(party);
-
         candidateFromDB.setUpdatedAt(LocalDateTime.now());
         candidateFromDB.setUpdatedBy(AuthServiceImplementation.getLoggedInUserEmail());
 
