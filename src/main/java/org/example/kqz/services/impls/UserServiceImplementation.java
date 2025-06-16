@@ -109,23 +109,7 @@ public class UserServiceImplementation implements UserService {
         userFromDB.setUpdatedBy(updatedBy);
         userFromDB.setCity(dto.getCity());
 
-        // --- IMPORTANT ADDITION HERE ---
-        if (dto.getRole() != null && userFromDB.getRole() != dto.getRole()) {
-            userFromDB.setRole(dto.getRole()); // Set the new role from the DTO
-        }
-        // --- END IMPORTANT ADDITION ---
-
-        // If you allow email/first/last name updates, add them here
-        if (dto.getEmail() != null && !dto.getEmail().equals(userFromDB.getEmail())) {
-            if (userRepository.existsByEmail(dto.getEmail())) {
-                throw new EmailAlreadyExistsException("User with email " + dto.getEmail() + " already exists");
-            }
-            userFromDB.setEmail(dto.getEmail());
-        }
-        // Add similar logic for firstName, lastName if they are editable
-
         var updatedUser = userRepository.save(userFromDB);
-        // Ensure your mapper's toUpdateDto method correctly maps the updated role back
         return mapper.toUpdateDto(updatedUser);
     }
 
