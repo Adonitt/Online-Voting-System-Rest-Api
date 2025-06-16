@@ -15,6 +15,7 @@ import org.example.kqz.repositories.PartyRepository;
 import org.example.kqz.repositories.UserRepository;
 import org.example.kqz.repositories.VoteRepository;
 import org.example.kqz.services.interfaces.CastVoteService;
+import org.example.kqz.services.interfaces.EmailService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class CastVoteServiceImplementation implements CastVoteService {
     private final VoteRepository voteRepository;
     private final UserRepository userRepository;
     private final VoteMapper voteMapper;
+    private final EmailService emailService;
 
     @Override
     public VoteResponseDto castVote(VoteRequestDto voteRequestDto) {
@@ -51,6 +53,13 @@ public class CastVoteServiceImplementation implements CastVoteService {
         user.setHasVoted(true);
         userRepository.save(user);
         voteRepository.save(savedVote);
+
+        emailService.sendVoteConfirmationEmail(
+                user.getEmail(),
+                user.getFirstName() + " " + user.getLastName(),
+                party,
+                candidates
+        );
 
         return voteMapper.toResponseDto(savedVote);
     }

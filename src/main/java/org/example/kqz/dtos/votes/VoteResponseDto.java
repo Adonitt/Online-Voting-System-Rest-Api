@@ -16,7 +16,7 @@ public class VoteResponseDto {
 
     private Long id;
 
-    private String user; // will hold user's email
+    private String user;
 
     private Long party;
 

@@ -6,8 +6,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.exceptions.ResourceNotFoundException;
+import org.example.kqz.repositories.UserRepository;
 import org.example.kqz.security.AppUserDetails;
 import org.example.kqz.services.interfaces.AuthService;
+import org.example.kqz.services.interfaces.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,13 +24,18 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImplementation implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final Map<String, Integer> failedAttempts = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap.KeySetView<Object, Boolean> emailSent = ConcurrentHashMap.newKeySet(); // to avoid multiple emails
+
 
     // qe me marre ni value prej application.properties - qysh e kem shenu atje, duhet edhe ktu
     @Value("${jwt.secret}")
@@ -37,10 +44,31 @@ public class AuthServiceImplementation implements AuthService {
 
     @Override
     public UserDetails authenticate(String email, String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-        return userDetailsService.loadUserByUsername(email);
+            failedAttempts.remove(email);
+            emailSent.remove(email);
+
+            return userDetailsService.loadUserByUsername(email);
+
+        } catch (Exception ex) {
+            failedAttempts.merge(email, 1, Integer::sum);
+
+            if (failedAttempts.get(email) >= 3 && !emailSent.contains(email)) {
+                userRepository.findByEmail(email).ifPresent(user -> {
+                    emailService.sendLoginAlert(
+                            user.getEmail(),
+                            user.getFirstName() + " " + user.getLastName()
+                    );
+                    emailSent.add(email);
+                });
+            }
+
+            throw ex;
+        }
     }
+
 
     @Override
     public String generateToken(UserDetails userDetails) {
