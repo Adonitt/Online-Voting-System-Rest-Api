@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImplementation implements EmailService {
-    private final JavaMailSender mailSender;
 
+    private final JavaMailSender mailSender;
 
     public void sendVoteConfirmationEmail(String toEmail,
                                           String fullName,
