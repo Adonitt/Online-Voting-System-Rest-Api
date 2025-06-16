@@ -19,6 +19,9 @@ public class UpdateUserRequestDto {
     @Positive
     private Long id;
 
+    private boolean hasVoted = false;
+
+    private RoleEnum role;
 
     private NationalityEnum nationality;
 
@@ -26,7 +29,4 @@ public class UpdateUserRequestDto {
 
     private String email;
 
-    private String updatedBy;
-
-    private LocalDateTime updatedAt;
 }
