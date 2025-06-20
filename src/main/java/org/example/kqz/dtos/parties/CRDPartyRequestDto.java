@@ -33,7 +33,6 @@ public class CRDPartyRequestDto {
     private List<CandidatesEntity> candidates;
 
 
-    @Size(min = 3, max = 3, message = "Number of party must be 3 characters")
     @NotBlank(message = "Number of party must not be empty")
     @NotNull(message = "Number of party must not be null")
     private String numberOfParty;
@@ -42,7 +41,6 @@ public class CRDPartyRequestDto {
 
     @NotNull(message = "Description must not be null")
     @NotBlank(message = "Description must not be empty")
-    @Size(min = 10, max = 255, message = "Description must be between 10 and 255 characters")
     private String description;
 
     private String createdBy;

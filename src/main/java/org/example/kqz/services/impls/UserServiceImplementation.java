@@ -11,6 +11,7 @@ import org.example.kqz.exceptions.*;
 import org.example.kqz.mappers.UserMapper;
 import org.example.kqz.repositories.CitizensRepository;
 import org.example.kqz.repositories.UserRepository;
+import org.example.kqz.services.interfaces.EmailService;
 import org.example.kqz.services.interfaces.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class UserServiceImplementation implements UserService {
     private final CitizensRepository citizensRepository;
     private final UserMapper mapper;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Override
     public CreateUserRequestDto add(CreateUserRequestDto dto) {
@@ -40,8 +42,9 @@ public class UserServiceImplementation implements UserService {
         entity.setPassword(encryptedPassword);
 
         var savedUser = userRepository.save(entity);
-
+        emailService.sendRegisteredUserEmail(savedUser.getEmail(), savedUser.getFirstName() + " " + savedUser.getLastName());
         return mapper.toDto(savedUser);
+
     }
 
     private void validateUser(CreateUserRequestDto dto) {

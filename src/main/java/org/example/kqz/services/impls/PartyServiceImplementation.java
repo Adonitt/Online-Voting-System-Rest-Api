@@ -5,8 +5,10 @@ import org.example.kqz.dtos.parties.CRDPartyRequestDto;
 import org.example.kqz.dtos.parties.PartyDetailsDto;
 import org.example.kqz.dtos.parties.PartyListingDto;
 import org.example.kqz.dtos.parties.UpdatePartyDto;
+import org.example.kqz.dtos.votes.VotingDates;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
+import org.example.kqz.exceptions.AddPartyCandidateClosedException;
 import org.example.kqz.exceptions.PartyAlreadyExistsException;
 import org.example.kqz.exceptions.PartyHasCandidateException;
 import org.example.kqz.exceptions.PartyNotFoundException;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -60,16 +63,21 @@ public class PartyServiceImplementation implements PartyService {
         String filename = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
         Path uploadDir = Paths.get("uploads");
         try {
-            Files.createDirectories(uploadDir); // Create uploads/ if it doesn't exist
+            Files.createDirectories(uploadDir);
             Path imagePath = uploadDir.resolve(filename);
             Files.write(imagePath, imageFile.getBytes());
-            return "uploads/" + filename;  // Return the path to the image file
+            return "uploads/" + filename;
         } catch (IOException e) {
             throw new RuntimeException("Failed to store image file", e);
         }
     }
 
     private void validateParty(CRDPartyRequestDto dto) {
+
+        if (LocalDate.now().isAfter(VotingDates.PARTY_CREATION_DEADLINE)) {
+            throw new AddPartyCandidateClosedException("Adding parties is closed!");
+        }
+
         if (repository.existsByName(dto.getName())) {
             throw new PartyAlreadyExistsException("Party with name '" + dto.getName() + "' already exists");
         }

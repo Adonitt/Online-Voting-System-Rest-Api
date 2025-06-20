@@ -1,6 +1,7 @@
 package org.example.kqz.configs;
 
 import org.example.kqz.entities.UserEntity;
+import org.example.kqz.entities.enums.CityEnum;
 import org.example.kqz.entities.enums.NationalityEnum;
 import org.example.kqz.entities.enums.RoleEnum;
 import org.example.kqz.repositories.UserRepository;
@@ -91,14 +92,15 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(UserRepository repository) {
         var user = new AppUserDetailsService(repository);
 
-        String email = "adonit@halili.com";
+        String email = "admin@rks.com";
 
         repository.findByEmail(email).orElseGet(() -> {
             var newUser = UserEntity.builder()
-                    .firstName("Adonit")
-                    .lastName("Halili")
+                    .firstName("Admin")
+                    .lastName("Admin")
                     .personalNo("1252334056")
                     .nationality(NationalityEnum.ALBANIAN)
+                    .city(CityEnum.PODUJEVO)
                     .birthDate(LocalDate.of(2005, 2, 12))
                     .registeredAt(LocalDateTime.now())
                     .hasVoted(false)

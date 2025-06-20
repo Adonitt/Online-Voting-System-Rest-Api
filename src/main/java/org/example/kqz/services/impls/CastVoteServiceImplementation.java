@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.dtos.votes.VoteRequestDto;
 import org.example.kqz.dtos.votes.VoteResponseDto;
+import org.example.kqz.dtos.votes.VotingDates;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
 import org.example.kqz.entities.UserEntity;
@@ -26,6 +27,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CastVoteServiceImplementation implements CastVoteService {
+
     private final PartyRepository partyRepository;
     private final CandidatesRepository candidatesRepository;
     private final VoteRepository voteRepository;
@@ -34,25 +36,45 @@ public class CastVoteServiceImplementation implements CastVoteService {
     private final EmailService emailService;
 
     @Override
-    public VoteResponseDto castVote(VoteRequestDto voteRequestDto) {
-        PartyEntity party = partyRepository.findById(voteRequestDto.getParty())
-                .orElseThrow(() -> new PartyNotFoundException("Party not found with ID: " + voteRequestDto.getParty()));
+    @Transactional
+    public VoteResponseDto castVote(VoteRequestDto dto) {
 
-        UserEntity user = validateVoteRequest(voteRequestDto, party);
+        LocalDate votingDay = VotingDates.VOTING_DAY;
 
-        List<CandidatesEntity> candidates = candidatesRepository.findAllById(voteRequestDto.getCandidates());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime start = votingDay.atStartOfDay(); // 2025-06-20 00:00
+        LocalDateTime end = votingDay.atTime(23, 59, 59); // 2025-06-20 23:59:59
+
+        if (now.isBefore(start)) {
+            throw new ItIsNotTheVotingDayException("Voting has not started yet.");
+        }
+        if (now.isAfter(end)) {
+            throw new ItIsNotTheVotingDayException("Voting has already closed.");
+        }
+
+        PartyEntity party = partyRepository.findById(dto.getParty())
+                .orElseThrow(() ->
+                        new PartyNotFoundException("Party not found, id=" + dto.getParty()));
+
+        UserEntity user = validateVoteRequest(dto, party);
+
+        List<CandidatesEntity> candidates =
+                candidatesRepository.findAllById(dto.getCandidates());
+
+        if (candidates.stream().anyMatch(c -> !c.getParty().equals(party))) {
+            throw new RuntimeException("At least one selected candidate is not in the chosen party.");
+        }
 
         VoteEntity vote = new VoteEntity();
         vote.setUser(user);
         vote.setParty(party);
         vote.setCandidates(candidates);
-        vote.setTimeStamp(LocalDateTime.now());
-
-        VoteEntity savedVote = voteRepository.save(vote);
+        vote.setTimeStamp(now);
 
         user.setHasVoted(true);
+
+        voteRepository.save(vote);
         userRepository.save(user);
-        voteRepository.save(savedVote);
 
         emailService.sendVoteConfirmationEmail(
                 user.getEmail(),
@@ -61,41 +83,35 @@ public class CastVoteServiceImplementation implements CastVoteService {
                 candidates
         );
 
-        return voteMapper.toResponseDto(savedVote);
+        return voteMapper.toResponseDto(vote);
     }
 
-    private UserEntity validateVoteRequest(VoteRequestDto voteRequestDto, PartyEntity party) {
-        String userEmail = AuthServiceImplementation.getLoggedInUserEmail();
+    private UserEntity validateVoteRequest(VoteRequestDto dto, PartyEntity party) {
 
-        UserEntity user = userRepository.findByEmail(userEmail)
+        String email = AuthServiceImplementation.getLoggedInUserEmail();
+
+        UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        if (user.getBirthDate() == null || user.getBirthDate().isAfter(LocalDate.now().minusYears(18))) {
-            throw new MustBe18ToVote("You must be 18 or older to vote.");
+        if (user.getBirthDate() == null ||
+                user.getBirthDate().isAfter(LocalDate.now().minusYears(18))) {
+            throw new MustBe18ToVote("You must be at least 18 years old to vote.");
         }
 
         if (user.isHasVoted()) {
             throw new AlreadyVotedException("You have already voted.");
         }
 
-        List<Long> candidateIds = voteRequestDto.getCandidates();
-        if (candidateIds.size() < 1 || candidateIds.size() > 5) {
-            throw new MustChooseBetween1And10Candidates("You must select between 1 and 10 candidates.");
+        List<Long> candidateIds = dto.getCandidates();
+        if (candidateIds.size() < 1 || candidateIds.size() > 10) {
+            throw new MustChooseBetween1And10Candidates("Select between 1 and 10 candidates.");
         }
 
-        List<CandidatesEntity> candidates = candidatesRepository.findAllById(candidateIds);
-        if (candidates.size() != candidateIds.size()) {
-            throw new RuntimeException("Some candidates were not found.");
-        }
-
-        for (CandidatesEntity candidate : candidates) {
-            if (!candidate.getParty().getId().equals(party.getId())) {
-                throw new RuntimeException("Candidate " + candidate.getId() + " does not belong to party " + party.getId());
-            }
+        List<CandidatesEntity> fetched = candidatesRepository.findAllById(candidateIds);
+        if (fetched.size() != candidateIds.size()) {
+            throw new RuntimeException("One or more candidates not found.");
         }
 
         return user;
     }
-
-
 }

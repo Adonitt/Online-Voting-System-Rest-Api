@@ -66,7 +66,7 @@ public class VoteResultsServiceImplementation implements VoteResultsService {
                         entry.getKey().getId(),
                         entry.getKey().getName(),
                         entry.getValue(),
-                        (entry.getValue() * 100.0) / totalVotes // percentage
+                        (entry.getValue() * 100.0) / totalVotes
                 ))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Party with ID " + partyId + " has no votes or does not exist"));
@@ -86,6 +86,7 @@ public class VoteResultsServiceImplementation implements VoteResultsService {
                     return new CandidateVoteResultDto(
                             c.getId(),
                             c.getFirstName(),
+                            c.getLastName(),
                             p.getId(),
                             p.getName(),
                             e.getValue()
@@ -134,7 +135,7 @@ public class VoteResultsServiceImplementation implements VoteResultsService {
     }
 
 
-    public List<CityVoteSummaryDto> getCityPartyVoteSummary() {
+    public List<CityVoteSummaryDto> getCityPartyVoteSummaryByCity() {
         var votes = voteRepository.findAll();
 
         Map<CityEnum, Map<String, Long>> cityPartyVotes = votes.stream()

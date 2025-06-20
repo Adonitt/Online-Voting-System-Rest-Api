@@ -18,6 +18,6 @@ public interface VoteResultsService {
 
     PartyVoteResultsDto getPartyResultById(Long partyId);
 
-    List<CityVoteSummaryDto> getCityPartyVoteSummary();
+    List<CityVoteSummaryDto> getCityPartyVoteSummaryByCity();
 
 }

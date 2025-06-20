@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.example.kqz.dtos.candidates.CRDCandidateRequestDto;
 import org.example.kqz.dtos.candidates.CandidateListingDto;
 import org.example.kqz.dtos.candidates.UpdateCandidateRequestDto;
+import org.example.kqz.dtos.votes.VotingDates;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
-import org.example.kqz.exceptions.CandidateNumberAlreadyExistsException;
-import org.example.kqz.exceptions.MustBe18ToVote;
-import org.example.kqz.exceptions.NotKosovoCitizenException;
-import org.example.kqz.exceptions.PersonalNumberAlreadyExists;
+import org.example.kqz.exceptions.*;
 import org.example.kqz.mappers.CandidatesMapper;
 import org.example.kqz.repositories.CandidatesRepository;
 import org.example.kqz.repositories.CitizensRepository;
@@ -79,6 +77,10 @@ public class CandidateServiceImplementation implements CandidateService {
     }
 
     private void validateCandidate(CRDCandidateRequestDto dto) {
+        if (LocalDate.now().isAfter(VotingDates.PARTY_CREATION_DEADLINE)) {
+            throw new AddPartyCandidateClosedException("Adding candidates is closed!");
+        }
+
         if (!citizensRepository.existsByPersonalNoAndFirstNameAndLastNameAndBirthDate(dto.getPersonalNo(), dto.getFirstName(), dto.getLastName(), dto.getBirthDate())) {
             throw new NotKosovoCitizenException("Incorrect data! Please recheck personal number, first name, last name and birth date.");
         }

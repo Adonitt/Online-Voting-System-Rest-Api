@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class CandidateVoteResultDto {
     private Long candidateId;
     private String firstName;
+    private String lastName;
     private Long partyId;
     private String partyName;
     private Long totalVotes;

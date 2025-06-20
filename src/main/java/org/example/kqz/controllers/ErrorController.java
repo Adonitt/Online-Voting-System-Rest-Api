@@ -1,6 +1,7 @@
 package org.example.kqz.controllers;
 
 import org.example.kqz.dtos.ErrorResponse;
+import org.example.kqz.dtos.votes.VotingDates;
 import org.example.kqz.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,7 @@ public class ErrorController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
-        );
+        ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
@@ -72,6 +71,7 @@ public class ErrorController {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
+
     @ExceptionHandler(MustChooseBetween1And10Candidates.class)
     public ResponseEntity<ErrorResponse> handleException(MustChooseBetween1And10Candidates e) {
         var errorResponse = new ErrorResponse("You must choose between 1 and 10 candidates!", HttpStatus.BAD_REQUEST.value(), null);
@@ -105,6 +105,18 @@ public class ErrorController {
     @ExceptionHandler(PartyHasCandidateException.class)
     public ResponseEntity<ErrorResponse> handleException(PartyHasCandidateException e) {
         var errorResponse = new ErrorResponse("Party cannot be deleted since it has candidate!", HttpStatus.BAD_REQUEST.value(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(AddPartyCandidateClosedException.class)
+    public ResponseEntity<ErrorResponse> handleException(AddPartyCandidateClosedException e) {
+        var errorResponse = new ErrorResponse("Adding party or candidates is closed in: " + VotingDates.PARTY_CREATION_DEADLINE, HttpStatus.BAD_REQUEST.value(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(ItIsNotTheVotingDayException.class)
+    public ResponseEntity<ErrorResponse> handleException(ItIsNotTheVotingDayException e) {
+        var errorResponse = new ErrorResponse("It is not the voting day! Voting day is: " + VotingDates.VOTING_DAY, HttpStatus.BAD_REQUEST.value(), null);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 

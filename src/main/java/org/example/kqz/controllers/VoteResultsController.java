@@ -47,7 +47,7 @@ public class VoteResultsController {
 
     @GetMapping("/city-summary")
     public List<CityVoteSummaryDto> getVoteSummaryByCity() {
-        return voteResultService.getCityPartyVoteSummary();
+        return voteResultService.getCityPartyVoteSummaryByCity();
     }
 
 

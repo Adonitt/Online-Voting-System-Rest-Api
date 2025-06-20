@@ -1,6 +1,7 @@
 package org.example.kqz.services.impls;
 
 import lombok.RequiredArgsConstructor;
+import org.example.kqz.dtos.votes.VotingDates;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
 import org.example.kqz.services.interfaces.EmailService;
@@ -83,5 +84,25 @@ public class EmailServiceImplementation implements EmailService {
                 party.getName(),
                 candidateLines
         );
+    }
+
+    public void sendRegisteredUserEmail(String toEmail, String fullName) {
+        String formattedDate = VotingDates.VOTING_DAY.format(DateTimeFormatter.ofPattern("MMMM dd, yyyy"));
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("Registration Confirmation - Online Voting");
+        message.setText("""
+            Dear %s,
+
+            You have successfully registered for online voting.
+            Please note that the voting date is on %s. After this date, you will not be able to vote.
+
+            Thank you for registering.
+
+            — Online Voting System
+            """.formatted(fullName, formattedDate));
+
+        mailSender.send(message);
     }
 }
