@@ -46,13 +46,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 
-        http.authorizeHttpRequests(auth -> auth
+        http
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/forgot-password").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "api/enums/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/enums/**").permitAll()
 
                         .requestMatchers(HttpMethod.PUT, "/api/v1/auth/change-password").authenticated()
 
@@ -65,11 +66,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/parties/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/parties").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/parties/{id}").hasRole(RoleEnum.ADMIN.name())
-                        .requestMatchers(HttpMethod.POST, "/api/v1/parties").hasRole(RoleEnum.ADMIN.name()).
-
-                        requestMatchers(HttpMethod.GET, "/api/v1/candidates").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "a/pi/v1/candidates/{id}").hasRole(RoleEnum.ADMIN.name())
                         .requestMatchers(HttpMethod.POST, "/api/v1/parties").hasRole(RoleEnum.ADMIN.name())
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/candidates").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/candidates/{id}").hasRole(RoleEnum.ADMIN.name())
                         .requestMatchers(HttpMethod.GET, "/api/v1/candidates/{id}").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
@@ -77,12 +77,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
 
-
                         .anyRequest().authenticated()
                 )
+                .cors().and() // ⬅️ Aktivizon CorsConfig-in tënd!
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
