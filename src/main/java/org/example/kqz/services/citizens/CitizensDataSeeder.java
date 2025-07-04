@@ -31,7 +31,7 @@ public class CitizensDataSeeder implements CommandLineRunner {
         for (int i = 100; i <= 999 && created < 30; i++) {
             String personalNo = "1234567" + i;
 
-            if (!suffrageService.existsByPersonalNo(personalNo)) {
+            if (suffrageService.existsByPersonalNo(personalNo)) {
                 continue;
             }
 
