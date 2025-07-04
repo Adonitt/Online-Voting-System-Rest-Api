@@ -46,7 +46,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 
-        http.cors().and()
+        http
+                .cors().and() // ⬅️ Aktivizon CorsConfig-in tënd!
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/login").permitAll()
@@ -79,7 +80,7 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated()
                 )
-                .cors().and() // ⬅️ Aktivizon CorsConfig-in tënd!
+
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
