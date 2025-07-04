@@ -46,47 +46,44 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 
-//        http.authorizeHttpRequests(auth -> auth
-//                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/login").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/v1/users/register").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/v1/users/forgot-password").permitAll()
-//                        .requestMatchers("/uploads/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "api/enums/**").permitAll()
-//
-//                        .requestMatchers(HttpMethod.PUT, "/api/v1/auth/change-password").authenticated()
-//
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/users/profile").hasAnyRole(RoleEnum.USER.name(), RoleEnum.ADMIN.name())
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasAnyRole(RoleEnum.USER.name(), RoleEnum.ADMIN.name())
-//
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/votes/**").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/v1/votes/**").permitAll()
-//
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/parties/{id}").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/parties").permitAll()
-//                        .requestMatchers(HttpMethod.PUT, "/api/v1/parties/{id}").hasRole(RoleEnum.ADMIN.name())
-//                        .requestMatchers(HttpMethod.POST, "/api/v1/parties").hasRole(RoleEnum.ADMIN.name()).
-//
-//                        requestMatchers(HttpMethod.GET, "/api/v1/candidates").permitAll()
-//                        .requestMatchers(HttpMethod.PUT, "a/pi/v1/candidates/{id}").hasRole(RoleEnum.ADMIN.name())
-//                        .requestMatchers(HttpMethod.POST, "/api/v1/parties").hasRole(RoleEnum.ADMIN.name())
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/candidates/{id}").permitAll()
-//
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
-//                        .requestMatchers(HttpMethod.POST, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
-//                        .requestMatchers(HttpMethod.PUT, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
-//                        .requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
-//
-//
-//                        .anyRequest().authenticated()
-//                )
-//                .csrf(csrf -> csrf.disable())
-//                .sessionManagement(session ->
-//                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+        http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/forgot-password").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/enums/**").permitAll()
+
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/auth/change-password").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/profile").hasAnyRole(RoleEnum.USER.name(), RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasAnyRole(RoleEnum.USER.name(), RoleEnum.ADMIN.name())
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/votes/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/votes/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/parties/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/parties").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/parties/{id}").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/v1/parties").hasRole(RoleEnum.ADMIN.name()).
+
+                        requestMatchers(HttpMethod.GET, "/api/v1/candidates").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "a/pi/v1/candidates/{id}").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/v1/parties").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/api/v1/candidates/{id}").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasRole(RoleEnum.ADMIN.name())
+
+
+                        .anyRequest().authenticated()
+                )
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
