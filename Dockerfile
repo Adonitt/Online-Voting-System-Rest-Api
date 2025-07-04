@@ -1,21 +1,13 @@
-# Base image me Java 17
-FROM eclipse-temurin:17-jre-alpine
-
-# Vendos folderin e punës brenda containerit
+# Build stage me Maven
+FROM maven:3.9.2-eclipse-temurin-17 AS build
 WORKDIR /app
-
-# Kopjo pom.xml dhe kodin burimor për të bërë build më shpejt (cache)
 COPY pom.xml .
 COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Ndërto jar-in me Maven Wrapper (mvnw)
-RUN ./mvnw clean package -DskipTests
-
-# Kopjo jar-in e krijuar nga target folder
-COPY target/kqz-0.0.1-SNAPSHOT.jar app.jar
-
-# Ekspozoni portin ku Spring Boot do të dëgjojë (zakonisht 8080)
+# Run stage me vetëm JRE
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/kqz-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-
-# Start komandë për të nisur aplikacionin
 ENTRYPOINT ["java", "-jar", "app.jar"]
