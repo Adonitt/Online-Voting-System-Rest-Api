@@ -13,7 +13,7 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("https://adonithalili-vote-online-sysyem.netlify.app/", "http://localhost:5713"));
+        config.setAllowedOrigins(List.of("https://adonithalili-vote-online-sysyem.netlify.app/", "http://localhost:5713/"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
