@@ -1,26 +1,21 @@
-# Use official OpenJDK image as a build environment
-FROM maven:3.9.3-eclipse-temurin-17 AS build
+# 🏗️ Stage 1: Build the app
+FROM maven:3.9.4-eclipse-temurin-21 AS build
 
 WORKDIR /app
-
-# Copy pom.xml and download dependencies (cache this step)
 COPY pom.xml .
-RUN mvn dependency:go-offline
-
-# Copy the source code and build the jar
 COPY src ./src
+
 RUN mvn clean package -DskipTests
 
-# Use a lightweight Java runtime for the final image
-FROM eclipse-temurin:17-jdk-alpine
+# 🚀 Stage 2: Run the app
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-# Copy the jar from the build stage
-COPY --from=build /app/target/kqz-api.jar ./kqz-api.jar
+# copy built jar
+COPY --from=build /app/target/kqz-0.0.1-SNAPSHOT.jar ./kqz-api.jar
 
-# Expose the port your Spring Boot app runs on (default 8080)
+# expose port (optional, Render handles it)
 EXPOSE 8080
 
-# Run the jar
 ENTRYPOINT ["java", "-jar", "kqz-api.jar"]
