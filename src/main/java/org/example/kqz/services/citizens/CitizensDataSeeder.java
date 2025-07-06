@@ -31,7 +31,11 @@ public class CitizensDataSeeder implements CommandLineRunner {
         for (int i = 100; i <= 999 && created < 30; i++) {
             String personalNo = "1234567" + i;
 
-            if (suffrageService.existsByPersonalNo(personalNo)) {
+            // Kontrollo sa citizen me kete personalNo ekzistojne
+            List<CitizensEntity> existing = suffrageService.findAllByPersonalNo(personalNo);
+
+            if (existing.size() >= 1) {
+                // Nëse ekziston 1 ose me shume, mos krijo citizen te ri me kete personalNo
                 continue;
             }
 

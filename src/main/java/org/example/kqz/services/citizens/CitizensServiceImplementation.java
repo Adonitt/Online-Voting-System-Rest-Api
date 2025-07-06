@@ -23,10 +23,19 @@ public class CitizensServiceImplementation implements CitizensService {
         return repository.count();
     }
 
-    @Override
     public boolean existsByPersonalNo(String personalNo) {
-        return repository.findByPersonalNo(personalNo).isPresent();
+        List<CitizensEntity> results = repository.findAllByPersonalNo(personalNo);
+        if (results.size() > 1) {
+            throw new IllegalStateException("Ka më shumë se një citizen me të njejtin personalNo: " + personalNo);
+        }
+        return !results.isEmpty();
     }
+
+    @Override
+    public List<CitizensEntity> findAllByPersonalNo(String personalNo) {
+        return repository.findAllByPersonalNo(personalNo);
+    }
+
 
     @Override
     public List<CitizensEntity> findAll() {
