@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.kqz.dtos.votes.VoteRequestDto;
 import org.example.kqz.dtos.votes.VoteResponseDto;
-import org.example.kqz.dtos.votes.VotingDates;
 import org.example.kqz.entities.CandidatesEntity;
 import org.example.kqz.entities.PartyEntity;
 import org.example.kqz.entities.UserEntity;
@@ -17,6 +16,7 @@ import org.example.kqz.repositories.UserRepository;
 import org.example.kqz.repositories.VoteRepository;
 import org.example.kqz.services.interfaces.CastVoteService;
 import org.example.kqz.services.interfaces.EmailService;
+import org.example.kqz.services.interfaces.VotingDatesService; // <-- service to get voting dates dynamically
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -34,16 +34,17 @@ public class CastVoteServiceImplementation implements CastVoteService {
     private final UserRepository userRepository;
     private final VoteMapper voteMapper;
     private final EmailService emailService;
+    private final VotingDatesService votingDatesService;
 
     @Override
     @Transactional
     public VoteResponseDto castVote(VoteRequestDto dto) {
 
-        LocalDate votingDay = VotingDates.VOTING_DAY;
+        LocalDate votingDay = votingDatesService.getCurrentVotingDates().getVotingDay();
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime start = votingDay.atStartOfDay(); // 2025-06-20 00:00
-        LocalDateTime end = votingDay.atTime(23, 59, 59); // 2025-06-20 23:59:59
+        LocalDateTime start = votingDay.atStartOfDay();
+        LocalDateTime end = votingDay.atTime(23, 59, 59);
 
         if (now.isBefore(start)) {
             throw new ItIsNotTheVotingDayException("Voting has not started yet.");
@@ -95,7 +96,7 @@ public class CastVoteServiceImplementation implements CastVoteService {
 
         if (user.getBirthDate() == null ||
                 user.getBirthDate().isAfter(LocalDate.now().minusYears(18))) {
-            throw new MustBe18ToVote("You must be at least 18 years old to vote.");
+            throw new MustBe18ToVote("You must be at least 18 years old to vote.");
         }
 
         if (user.isHasVoted()) {
