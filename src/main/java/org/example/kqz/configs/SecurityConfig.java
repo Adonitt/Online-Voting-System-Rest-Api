@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/forgot-password").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/enums/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/voting-dates").permitAll()
 
                         .requestMatchers(HttpMethod.PUT, "/api/v1/auth/change-password").authenticated()
 
