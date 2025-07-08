@@ -32,10 +32,6 @@ public class VotingDatesController {
         return ResponseEntity.ok(votingDatesService.updateVotingDates(id, votingDates));
     }
 
-    @GetMapping("/current")
-    public ResponseEntity<VotingDates> getCurrent() {
-        return ResponseEntity.ok(votingDatesService.getCurrentVotingDates());
-    }
 
     @GetMapping("/default")
     public VotingDates defaultObject() {
