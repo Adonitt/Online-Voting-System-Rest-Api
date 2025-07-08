@@ -47,6 +47,20 @@ public class VotingDatesServiceImpl implements VotingDatesService {
         return toDto(entity);
     }
 
+    public VotingDates createVotingDates(VotingDates votingDates) {
+        long count = votingDatesRepository.count();
+        if (count >= 1) {
+            throw new RuntimeException("Voting dates already exist. Only one record is allowed.");
+        }
+
+        VotingDatesEntity entity = new VotingDatesEntity();
+        entity.setPartyCreationDeadline(votingDates.getPartyCreationDeadline());
+        entity.setVotingDay(votingDates.getVotingDay());
+
+        VotingDatesEntity saved = votingDatesRepository.save(entity);
+        return toDto(saved);
+    }
+
     private VotingDates toDto(VotingDatesEntity entity) {
         VotingDates dto = new VotingDates();
         dto.setPartyCreationDeadline(entity.getPartyCreationDeadline());

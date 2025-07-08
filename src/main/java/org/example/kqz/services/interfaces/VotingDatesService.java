@@ -8,8 +8,11 @@ public interface VotingDatesService {
 
     List<VotingDates> getAllVotingDates();
 
+    public VotingDates createVotingDates(VotingDates votingDates);
+
 
     VotingDates updateVotingDates(Long id, VotingDates votingDates);
+
     VotingDates getCurrentVotingDates();
 
 }
