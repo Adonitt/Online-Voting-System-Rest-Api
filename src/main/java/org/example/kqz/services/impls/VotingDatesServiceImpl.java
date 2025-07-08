@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class VotingDatesServiceImpl implements VotingDatesService {
@@ -41,9 +42,6 @@ public class VotingDatesServiceImpl implements VotingDatesService {
 
     public VotingDates getCurrentVotingDates() {
         VotingDatesEntity entity = votingDatesRepository.findTopByOrderByIdDesc();
-        if (entity == null) {
-            return new VotingDates(DEFAULT_PARTY_CREATION_DEADLINE, DEFAULT_VOTING_DAY);
-        }
         return toDto(entity);
     }
 
@@ -63,6 +61,7 @@ public class VotingDatesServiceImpl implements VotingDatesService {
 
     private VotingDates toDto(VotingDatesEntity entity) {
         VotingDates dto = new VotingDates();
+        dto.setId(entity.getId());
         dto.setPartyCreationDeadline(entity.getPartyCreationDeadline());
         dto.setVotingDay(entity.getVotingDay());
         return dto;

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VotingDates {
+    private Long id;
     public static final LocalDate PARTY_CREATION_DEADLINE = LocalDate.of(2025, 8, 25);
     public static final LocalDate VOTING_DAY = LocalDate.of(2025, 8, 26);
 
